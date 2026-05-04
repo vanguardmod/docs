@@ -1,0 +1,230 @@
+[[installation]]
+= Installation
+
+This chapter walks a server administrator from a fresh {etl-name} install to a
+running {vg-name} server. Players require **no client-side install** — see
+<<client-requirements>>.
+
+== Server requirements
+
+{vg-name} is distributed as a pure QVM mod and runs on top of an existing
+{etl-name} dedicated server. There is no custom engine, no patched binary, and
+no special compiler or runtime needed at the server host.
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Runtime
+| {etl-name}, dedicated server. {vg-name} is built against the {etl-name} Mod
+  SDK and is **not** compatible with vanilla {et-name} 2.60b.
+
+| Operating system
+| Linux (x86_64) or Windows (x86_64). 32-bit hosts are not a tested target,
+  but the bundled Omnibot ships both 32- and 64-bit variants.
+
+| Server type
+| Dedicated server is the only supported deployment for cup play. A listen
+  server (i.e. running the mod inside a regular game client) is fine for
+  development and LAN testing but is not recommended for public hosting.
+
+| Disk footprint
+| The `vanguard/` mod folder is small (single PK3 plus a handful of config
+  files). Exact size varies with bundled assets per release — see the asset
+  list on the corresponding GitHub release at {vg-repo}/releases.
+
+| Network
+| Standard {et-name} server ports (UDP). No additional inbound ports are
+  required. Outbound HTTPS to {vg-website} is required for the protected
+  build (stats, anti-cheat handshake, ban-list sync) — see <<wolfguard>>.
+|===
+
+[NOTE]
+====
+**TODO** — pin the minimum supported {etl-name} version once the build matrix
+is finalised for v0.5.x. Until then, build against the latest stable {etl-name}
+release.
+====
+
+[[client-requirements]]
+== Client requirements
+
+**None beyond a working {et-name} install.**
+
+{vg-name} is a pure QVM modification: no custom client binary, no custom
+renderer, no special pak. Any of the following client setups work without
+modification:
+
+* Stock {et-name} 2.60b
+* {etl-name} client (recommended for the best gameplay experience)
+
+Auto-download of the mod's PK3 works through the stock `cl_allowDownload`
+mechanism. The first time a player connects to a {vg-name} server, the client
+downloads the mod PK3 into its own `vanguard/` folder; subsequent connects use
+the cached copy.
+
+[TIP]
+====
+A first-time download is faster from a HTTP redirect (`sv_wwwDownload`,
+`sv_wwwBaseURL`). If you mirror your PK3s on a web server you should set
+these — UDP-only auto-download is slow.
+====
+
+== Quick install
+
+Five steps from a clean {etl-name} server to a {vg-name} server.
+
+. **Get the release PK3.** Download the latest `vanguard-vX.Y.Z.pk3` from the
+  GitHub releases page at {vg-repo}/releases.
+
+. **Drop the PK3 into a new `vanguard/` folder** alongside `etmain/` in your
+  {etl-name} server's home directory:
++
+[source,console]
+----
+$ mkdir -p ~/etlserver/vanguard
+$ cp vanguard-vX.Y.Z.pk3 ~/etlserver/vanguard/
+----
+
+. **Add `+set fs_game vanguard`** to your server start command (or set
+  `fs_game` in the config). For example:
++
+[source,console]
+----
+$ etlded +set dedicated 2 \
+         +set fs_game vanguard \
+         +exec server.cfg
+----
+
+. **Start the server** and watch the console for the {vg-name} boot banner.
+  A successful boot writes one log line containing `{vg-name-colored}` and
+  the version string.
+
+. **Verify with rcon.** Connect a client, open the in-game console, and
+  issue:
++
+[source,console]
+----
+] /rcon login PASSWORD
+] /rcon !admintest
+----
++
+A successful `!admintest` reply confirms the admin system is wired up
+against your `g_admin` cvars (see <<server-admin>>).
+
+== Verifying the installation
+
+After the server boots, three cheap checks confirm that {vg-name} is the
+active gamecode:
+
+. **`serverinfo` cvar.** From the in-game console (or via `rcon`):
++
+[source,console]
+----
+] /rcon serverinfo
+----
++
+Look for `gamename` set to `vanguard` (matching `fs_game`).
+
+. **In-game mod menu.** Bring up the in-game UI; the active mod is shown
+  as `{vg-name-colored}` with the version string.
+
+. **Boot log.** The server console prints one banner line on boot containing
+  the colored mod name and version. This line is the canonical
+  identification used by tooling.
+
+[NOTE]
+====
+**TODO** — quote the exact boot-banner line format once it is finalised. The
+banner shape may shift across alpha releases.
+====
+
+== Upgrading from a previous version
+
+{vg-name} versions follow `vMAJOR.MINOR.PATCH[.HOTFIX]` semantics
+(see <<intro,Introduction>>):
+
+* **Patch and hotfix releases** (`vX.Y.Z` → `vX.Y.Z+1`, or `vX.Y.Z` →
+  `vX.Y.Z.HOTFIX`) are drop-in compatible. No `server.cfg` changes are
+  required. Replace the PK3 and restart.
+
+* **Minor releases** (`vX.Y` → `vX.Y+1`) may add new cvars and commands but
+  do not break existing config in the alpha series. Read the release notes
+  for any new tunables you may want to set.
+
+* **Major releases** (`v0.x` → `v1.0`) will mark the **Beta** milestone with
+  a stable cvar contract. Until then (the v0.x.x alpha series), expect
+  occasional cvar renames or default changes; the release notes call these
+  out per release.
+
+The recommended upgrade procedure:
+
+. Stop the server.
+. Remove the old PK3 from the `vanguard/` folder. The PK3 is versioned in
+  its filename, so leaving the old one in place will let clients keep
+  running on the older code if their `cl_allowDownload` is off.
+. Drop in the new PK3.
+. Restart.
+
+[CAUTION]
+====
+Never edit a release PK3. If you need to ship per-server overrides
+(e.g. a custom welcome message), use a separate side-pak in the
+`vanguard/` folder, not a hand-edited copy of the release PK3.
+====
+
+[[stats-endpoints]]
+== Stats endpoints
+
+{vg-name} servers can forward gameplay events (kills, captures, round
+results) to one or more remote stats APIs. The roadmap target is a
+multi-endpoint dispatcher driven by a `stats_endpoints.cfg` file that
+defines named endpoints in `[endpoint:NAME]` sections. Each endpoint
+specifies its `url`, an authentication `key`, the modes it accepts
+(`cup`, `fun`, or `both`), and whether it is `enabled`. The dispatcher
+batches events asynchronously and applies per-endpoint timeout and retry
+policies; a privacy mode anonymises player identifiers before dispatch
+where required.
+
+[NOTE]
+====
+**TODO** — the multi-endpoint dispatcher is the planned shape for v0.6.0;
+v0.5.4 is targeted for the single-endpoint precursor. Until the
+implementation lands, the cvar surface and the file format documented
+here are forward-looking and should be treated as a design note, not a
+configuration reference. Verify against the cvar list of the actual
+release you are running.
+====
+
+A representative shape of `stats_endpoints.cfg`:
+
+[source]
+----
+[endpoint:vanguardmod]
+url      = https://vanguardmod.com/api/stats
+key      = SERVERKEY
+modes    = both
+enabled  = 1
+
+[endpoint:third-party]
+url      = https://stats.example.org/v1/ingest
+key      = OTHERKEY
+modes    = fun
+enabled  = 0
+----
+
+The first-party endpoint at {vg-website} is the canonical sink for cup
+stats. Server admins running fun-mode-only servers may additionally point
+at any number of third-party endpoints.
+
+== WolfGuard server registration
+
+{vg-name} ships in two builds (see <<wolfguard,WolfGuard chapter>>):
+
+* The **community build** does not include {wg-name} and requires no
+  registration, but is **not eligible** for cup play.
+* The **protected build** includes {wg-name} and **requires** a
+  one-time server registration at {vg-website}. The registration flow
+  issues a server key that the mod presents on boot.
+
+The full registration walkthrough — key issuance, key rotation, what is
+sent and received — lives in the <<wolfguard>> chapter. Cup organisers
+should default to the protected build.
