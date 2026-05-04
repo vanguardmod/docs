@@ -1,0 +1,59 @@
+[[commands]]
+= Command Reference
+
+This chapter is the alphabetical, comprehensive reference for every admin
+`!command` exposed by {vg-name}. The full per-command pages (synopsis,
+privilege, arguments, behaviour, examples) live under a `cmd/` directory in
+the docs repository, mirroring the layout of `cvar/`, and are included from
+this chapter alphabetically.
+
+[NOTE]
+====
+**TODO** — populate the per-command pages. Each command should follow the
+same template shape as the cvar pages under `cvar/`: anchor, level-3
+heading, attribute table (Privilege / Source / Since / Scope), prose
+description per argument, examples, and a See-also section.
+
+The table below is a stop-gap index that lists the commands referenced
+elsewhere in this manual; replace each row with a real `<<…>>` link as
+its page lands.
+====
+
+== Index
+
+The commands below are referenced from other chapters of this manual and
+are the priority targets for the per-command page rollout.
+
+[cols="2,1,4",options="header",frame=all]
+|===
+| Command          | Privilege   | Synopsis
+
+| `!admintest`     | `C/admintest`     | Report the issuing user's level, used to verify the admin system is alive.
+| `!banuser`       | `C/banuser`       | Ban a user by slot or GUID for a given duration with a reason string.
+| `!unban`         | `C/unban`         | Lift an existing ban by ban-id.
+| `!banlist`       | `C/banlist`       | List active bans on this server.
+| `!baninfo`       | `C/baninfo`       | Show full detail for one ban-id.
+| `!help`          | `C/help`          | List commands the issuing user is allowed to run, or print usage for one command.
+| `!hide`          | `C/hide`          | Hide the issuing admin from `!status` and similar listings.
+| `!kick`          | `C/kick`          | Remove a user from the server for the rest of the session.
+| `!levadd`        | `C/levadd`        | Create a new admin level with a numeric id and a display name.
+| `!levdel`        | `C/levdel`        | Delete an existing admin level.
+| `!leveldit`      | `C/leveldit`      | Edit an existing admin level (display name, ACL).
+| `!levedit`       | `C/levedit`       | Edit an existing admin level — see <<server-admin>>.
+| `!levlist`       | `C/levlist`       | List configured admin levels.
+| `!levinfo`       | `C/levinfo`       | Show full detail for one admin level.
+| `!mute`          | `C/mute`          | Suppress chat from a target user.
+| `!readconfig`    | `C/readconfig`    | Re-read the admin configuration file in-place.
+| `!setlevel`      | `C/setlevel`      | Assign a level to a user by slot or GUID.
+| `!status`        | `C/status`        | List connected slots, levels, and (optionally) IPs.
+| `!useredit`      | `C/useredit`      | Edit a single user's record (alias, GUID, ACL).
+| `!userinfo`      | `C/userinfo`      | Show full detail for one user record.
+| `!userlist`      | `C/userlist`      | List configured user records.
+|===
+
+[NOTE]
+====
+The `Privilege` column above shows the canonical `C/<command>` grant name
+(see <<privileges>>). The exact spelling of each grant in the running mod
+should be verified with `!help` against your installed version.
+====
