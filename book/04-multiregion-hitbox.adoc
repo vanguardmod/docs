@@ -1,0 +1,154 @@
+[[multiregion-hitbox]]
+= Multi-Region Hitbox
+
+The {vg-name} hit-detection model is built on per-region capsules attached to
+the player's animation skeleton, replacing the single axis-aligned bounding
+box (AABB) used by stock {et-name}. This is the mod's flagship technical
+feature and the foundation of every weapon-balance decision.
+
+The capsule set and impactpoint indices documented below are stable as of
+v0.5.2.3. Diagrams and per-region damage scaling tables are deferred to a
+later docs revision.
+
+== Overview
+
+Stock ET resolves hits against a 36×72-unit AABB that follows the player
+origin. The AABB is cheap, but it has well-known problems: hits register
+visibly off-model, and hit-region differentiation (head/body/legs) is
+approximated rather than measured.
+
+{vg-name} replaces this with a stack of bone-anchored capsules — one per
+hit region — populated each server frame from the same skeletal data the
+renderer uses to draw the player. A bullet trace is tested against each
+capsule in priority order, and the first intersection determines both
+the damage scaling and the impactpoint reported to the client.
+
+== Hit regions
+
+The current capsule set covers nine logical regions:
+
+[cols="1,1,3",options="header",frame=all]
+|===
+| Region   | Impactpoint | Notes
+
+| HEAD     | 1
+| Sphere on the skull (Bip01 Head bone), `+6.5` Z-offset to skull centre,
+  radius `7` (was `6` prior to v0.5.2.3).
+
+| NECK     | 2
+| Sphere with radius `4`, bridging head and chest (gap-fill added in
+  v0.5.2.3 to close the "neck-shot pass-through" gap).
+
+| CHEST    | 3
+| Capsule from sternum to upper-abdomen.
+
+| GUT      | 4
+| Capsule from upper-abdomen to pelvis.
+
+| GROIN    | 5
+| Sphere at the pelvis (Alphaloki's `groinhit` capsule).
+
+| SHOULDER | 6
+| Two capsules, one per shoulder, bridging neck and upper-arm bones.
+
+| ARMS     | 7
+| Four capsules — UpperArm and Forearm, left and right (added in v0.5.2.3).
+
+| KNEE     | 8
+| Two capsules, one per leg, around the knee bone.
+
+| LEGS     | 9
+| Two capsules, one per leg, from hip to ankle.
+|===
+
+Impactpoint `0` (`IMPACTPOINT_UNUSED`) is reserved for "no region matched".
+With <<cvar.vanguard_hitbox_strict>> at its default `1`, a shot that
+resolves to impactpoint `0` deals no damage; with strict disabled, a shot
+that resolves to `0` falls back to the legacy AABB.
+
+== Strict vs legacy mode
+
+The cvar <<cvar.vanguard_hitbox_strict>> controls whether hits that miss every
+capsule fall back to the legacy AABB:
+
+* `vanguard_hitbox_strict 1` *(default, cup-orthodox)* — capsule miss = no
+  damage. There is no fallback. This is the only correct setting for
+  competitive play.
+* `vanguard_hitbox_strict 0` — capsule miss falls back to the legacy AABB.
+  This is provided for legacy-compatibility testing only; cup matches **must
+  not** run with this setting.
+
+== Lag compensation and multi-region
+
+Lag compensation is the server-side technique that rewinds the world to
+the moment the shooter actually pulled the trigger, so a shot fired at a
+target the shooter saw on their screen also hits that target on the
+server. In stock {et-name} the rewind only needs to restore the position
+of each player's AABB — a single origin and a fixed-shape box.
+
+Multi-region capsules raise the cost of a correct rewind: a faithful
+replay needs to restore not just the target's origin but also the
+animation state that drove each capsule's bone, because every region
+moves independently when the player's skeleton animates (running, prone,
+crouch transition, weapon swap). A naive origin-only rewind correctly
+predicts torso hits but mispredicts limb hits whenever the limb has
+moved relative to the torso during the lag-comp window.
+
+[NOTE]
+====
+**TODO** — document the concrete lag-compensation strategy
+({vg-name}-specific window, whether bone state is rewound or only the
+origin, and the impact on Cup Mode `sv_fps` profiles) once Phase 7.2
+(Netcode Tuning) lands. Until then, treat the netcode behaviour as
+shipped — the chapter will be updated when the new tuning hits a release.
+====
+
+== Diagnostics
+
+When debugging hit-detection in production, the cvar
+<<cvar.vanguard_hitbox_debug>> emits `VG_DIAG:` log lines for every shot,
+including bone resolution and capsule-test results. A separate one-shot
+diagnostic dump (<<cvar.vanguard_diag_dump>>) gives a full bone-axis
+world-projection at the next eligible shot.
+
+The two log prefixes are:
+
+`VG_DIAG:`::
+  One per shot, written for every bullet trace while
+  <<cvar.vanguard_hitbox_debug>> is `1`. Includes the shooter slot, the
+  victim slot, the resolved capsule (or "none" for a strict-mode reject),
+  and the impactpoint number that will be reported back to the client.
+
+`VG_DIAG_DUMP:`::
+  Multi-line burst, written once when <<cvar.vanguard_diag_dump>> is
+  armed and a subsequent eligible shot fires. Contains the full
+  bone-axis world-projection at the moment of the shot — useful for
+  reconstructing the capsule geometry against a demo timeline.
+
+[NOTE]
+====
+**TODO** — paste a representative `VG_DIAG:` and `VG_DIAG_DUMP:` block
+from a current build once the on-disk format is frozen. The shape of the
+log lines is intentionally `grep`-friendly but is not yet a stable
+machine-parseable contract.
+====
+
+To extract just the diagnostic stream from a busy server log:
+
+[source,console]
+----
+$ grep -E '^VG_DIAG(_DUMP)?:' server.log
+----
+
+[CAUTION]
+====
+The diagnostic output is verbose and is **not appropriate for long-running
+production servers** — the per-shot rate scales with player count and
+weapon fire rate. Enable it for the duration of a test, then disable it.
+The `VG_DIAG_DUMP:` burst is a one-shot and self-disables; the per-shot
+`VG_DIAG:` stream stays on until <<cvar.vanguard_hitbox_debug>> is
+explicitly set back to `0`.
+====
+
+See also: <<cvar.vanguard_hitbox_strict>>, <<cvar.vanguard_hitbox_debug>>,
+<<cvar.vanguard_diag_dump>>.
