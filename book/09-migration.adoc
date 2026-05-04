@@ -1,0 +1,208 @@
+[[migration]]
+= Migration
+
+This chapter is for server admins coming from another {et-name-abbr} mod. It
+maps the cvars, commands, and concepts you already know to their {vg-name}
+equivalents.
+
+[NOTE]
+====
+The mapping tables below are intentionally seeded with a handful of
+representative rows. The tables are open for community contribution — file
+a pull request against {vg-docs-repo} with additional rows and a short
+note on any non-obvious behavioural difference.
+====
+
+[[migration-jaymod]]
+== From {mod-jaymod}
+
+{mod-jaymod} is the closest cosmetic ancestor of the {vg-name} admin
+system. The shrubbot-style command grammar, the level-and-user model, and
+the privilege ACL syntax (`+`/`-`/`!`) carry over almost unchanged. The
+biggest behavioural deltas are the multi-region hit model
+(see <<multiregion-hitbox>>) and the cup/fun mode split
+(see <<cup-vs-fun-mode>>) — neither has a {mod-jaymod} equivalent.
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-jaymod} cvar      | {vg-name} cvar          | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-jaymod} command   | {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the tables with the full {mod-jaymod} cvar and command
+inventory.
+====
+
+[[migration-noquarter]]
+== From {mod-noquarter}
+
+{mod-noquarter} extended the stock class system with new weapons and
+custom abilities. Most {mod-noquarter} class extensions have no direct
+analogue in {vg-name}'s Cup Mode — the cup-orthodox feature set is
+narrower by design (see <<cup-vs-fun-mode>>). When porting a
+{mod-noquarter} server config, expect to drop class-extension cvars
+entirely on the cup-mode profile and to re-evaluate them on the fun-mode
+profile.
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-noquarter} cvar   | {vg-name} cvar          | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-noquarter} command| {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the tables with the full {mod-noquarter} cvar and
+command inventory, separating items that map cleanly from items that
+only re-emerge in Fun Mode.
+====
+
+[[migration-silent]]
+== From {mod-silent}
+
+{mod-silent} is widely deployed for public servers and ships its own
+admin extensions on top of the shrubbot lineage. Most administrative
+concepts (levels, user records, ACL grants) port across with minor
+syntax adjustments. {mod-silent}'s competitive feature toggles
+(weapon-tweak family, hit-detection tweaks) collapse into the {vg-name}
+multi-region capsule model and the cup/fun split — there is no
+per-feature toggle for hit detection, because every region is "real" by
+default (see <<multiregion-hitbox>>).
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-silent} cvar      | {vg-name} cvar          | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-silent} command   | {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the tables with the {mod-silent} cvar and command
+inventory.
+====
+
+[[migration-etpub]]
+== From {mod-etpub}
+
+{mod-etpub} occupies similar ground to {mod-silent} for public-server
+admins. Its admin model is shrubbot-derived and ports naturally; its
+gameplay tuning cvars need to be re-evaluated against the cup-defaults
+locked by <<cvar.vg_fun>>.
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-etpub} cvar       | {vg-name} cvar          | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-etpub} command    | {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the tables with the {mod-etpub} cvar and command
+inventory.
+====
+
+[[migration-etpro]]
+== From {mod-etpro}
+
+{mod-etpro}'s `g_realBody` bitflag selects which body parts get realistic
+hit detection in addition to the legacy AABB. {vg-name}'s multi-region
+capsules supersede this: every region is real by default and individually
+addressable, and the only relevant tunable is <<cvar.vanguard_hitbox_strict>>
+(strict-by-default, with no AABB fallback in cup play). There is no
+{vg-name} equivalent to `g_realBody` — the question "which parts are
+real?" is answered by "all of them", always.
+
+[NOTE]
+====
+{mod-etpro} is closed-source and is referenced here only for cvar **spec**
+parity (i.e. matching public cvar names where the behaviour is comparable).
+No {mod-etpro} code, decompiled or otherwise, is incorporated into
+{vg-name}.
+====
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-etpro} cvar       | {vg-name} cvar          | Notes
+
+| `g_realBody`           | _no equivalent_         | Multi-region capsules supersede the bitflag — every region is real by default.
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-etpro} command    | {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the spec-mapping tables with the public {mod-etpro}
+cvar and command names. Behavioural notes should describe how {vg-name}
+matches or diverges from the documented {mod-etpro} behaviour, not how
+{mod-etpro} implements it internally.
+====
+
+[[migration-nitmod]]
+== From {mod-nitmod}
+
+{mod-nitmod} is fun-mode-leaning by design and has a long list of
+feature toggles that map naturally to the {vg-name} `vg_fun_*` family
+(see <<cup-vs-fun-mode>>). Admins migrating a {mod-nitmod} public server
+should first set <<cvar.vg_fun>> to `1` and then port toggles
+individually rather than trying to enumerate them on a Cup Mode profile.
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-nitmod} cvar      | {vg-name} cvar          | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[cols="2,2,3",options="header",frame=all]
+|===
+| {mod-nitmod} command   | {vg-name} command       | Notes
+
+| _example row_          | _example row_           | Mapping table — community contributions welcome via PR.
+|===
+
+[NOTE]
+====
+**TODO** — populate the tables with the {mod-nitmod} cvar and command
+inventory, focusing on the public-server feature toggles likely to be
+re-enabled under `vg_fun 1`.
+====
