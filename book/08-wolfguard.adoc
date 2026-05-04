@@ -1,0 +1,206 @@
+[[wolfguard]]
+= WolfGuard
+
+{wg-name} is the integrated server-side anti-cheat shipped with the protected
+build of {vg-name}. It is active on both Cup Mode and Fun Mode servers, and
+its bans are propagated to a centralised global ban database modelled
+similarly to Steam VAC.
+
+[CAUTION]
+====
+This chapter documents only the **public-facing** behaviour of {wg-name} —
+how to register a server, how the ban tier system works, what a banned user
+sees. The detection stack is **closed-source by design** and is never
+documented in detail; doing so would weaken the protection it provides.
+====
+
+== Editions
+
+[cols="1,3",options="header",frame=all]
+|===
+| Build         | {wg-name} active?
+
+| Community
+| No. The community build ships a null AC provider stub. This build is free to
+  redistribute but is **not eligible** for cup or league play.
+
+| Protected
+| Yes. The protected build is gated by server registration at {vg-website}
+  and is the only build accepted for cup play and the global ban database.
+|===
+
+== Server registration
+
+The protected build of {vg-name} requires a one-time server registration
+at {vg-website} before its first boot. Registration ties a server to an
+operator account and produces the credential the mod presents to the
+{wg-name} backend on every connect.
+
+The registration flow at a high level:
+
+. Sign in to your operator account at {vg-website}.
+. Add a new server entry. The form asks for the server's hostname, its
+  IP/port, and a contact address used for security notifications.
+. Confirm the registration. The site issues a server-key file.
+. Drop the server-key file into the location documented at the time of
+  issuance.
+. Boot the server. The mod reads the key on startup and registers with
+  the {wg-name} backend; a successful handshake is logged once and the
+  server appears as **active** on your operator dashboard.
+
+[IMPORTANT]
+====
+The server-key file is a credential. Treat it like an SSH private key:
+do not commit it to a public repository, do not share it with players,
+and rotate it immediately if it is ever exposed. Rotation is a single
+click in the operator dashboard at {vg-website}; the old key is
+invalidated on the next handshake.
+====
+
+[NOTE]
+====
+**TODO** — exact filename and on-disk path for the server-key file once
+the registration UI is finalised. The placeholder is something like
+`vanguard/wolfguard.key`. Update this section when the v0.5.x server
+launches.
+====
+
+A server may be unregistered at any time from the operator dashboard.
+Unregistering revokes the key and demotes the server's stats to
+non-cup-eligible until a new registration is completed.
+
+== Ban tiers
+
+{wg-name} bans are issued in three tiers. The tier sets the duration,
+the scope (this server vs every {wg-name}-protected server), and how the
+ban is surfaced in the public ban list at {vg-website}.
+
+[cols="1,1,1,3",options="header",frame=all]
+|===
+| Tier   | Default duration  | Scope            | Public ban list
+
+| Warn
+| One session
+| Local — this server, this map rotation
+| Not listed
+
+| Temp
+| Hours to days
+| Local — this server only
+| Listed for the duration of the ban
+
+| Global
+| Permanent unless overturned
+| Every {wg-name}-protected server
+| Always listed
+|===
+
+A **warn** is the lightest action: the player is removed for the rest of
+the current session and may rejoin on the next map. A **temp** ban is a
+local, time-bounded ban issued by either the server's admin team or the
+{wg-name} backend. A **global** ban is the heaviest action and is only
+issued by the {wg-name} review team after a confirmed detection or after
+manual evidence review; it propagates to every protected server.
+
+=== Appeals
+
+Every ban — warn, temp, or global — carries a unique ban-id (see
+<<banned-user-view>>) that the affected player can use to file an appeal
+at {vg-website}. The appeal flow is:
+
+. Visit {vg-website} and open the appeal form.
+. Submit the ban-id, your contact address, and a written statement.
+. The {wg-name} review team responds via the contact address. Reviews
+  for global bans are handled by humans; warn and temp tiers may be
+  delegated to the issuing server's admin team.
+
+[NOTE]
+====
+**TODO** — pin the canonical appeal-response SLA once the review team's
+process is finalised. The placeholder target is "first response within
+seven days" but should be replaced with whatever the operator
+agreement guarantees.
+====
+
+[[banned-user-view]]
+== What a banned user sees
+
+A {wg-name} ban is delivered as a server-side kick with a structured
+message. The player is shown the tier, the ban-id, and the URL of the
+appeal form. A representative kick message:
+
+[source,console]
+----
+You have been removed from this server by WolfGuard.
+
+  Tier:   global
+  Ban-ID: WG-XXXXXXXX-YYYYY
+  Reason: <short, public reason string>
+
+To appeal this decision, visit https://vanguardmod.com/appeal
+and quote your Ban-ID.
+----
+
+The ban-id has a fixed shape — a `WG-` prefix, an opaque server-issued
+segment, and a short check segment — so it can be quoted unambiguously
+in support tickets and on the public ban list.
+
+[NOTE]
+====
+**TODO** — pin the exact ban-id alphabet, segment lengths, and whether
+the check segment is verifiable client-side. Until the format is
+frozen, the example above is illustrative only.
+====
+
+== Privacy and logging
+
+{wg-name} is a server-side anti-cheat. The {vg-name} mod uses standard
+server-side facilities to evaluate gameplay events; the specific signals
+used by {wg-name} are not documented here, by policy.
+
+The remainder of this section describes only the data flows that are
+visible to the operator and to the player.
+
+[cols="1,3",options="header",frame=all]
+|===
+| Data                     | Where it flows
+
+| Player GUID
+| Used by the mod to identify a slot. Forwarded to the {wg-name} backend
+  on a ban event so the global ban list can recognise the player on
+  other protected servers.
+
+| Player IP address
+| Used by the server engine to route packets. Logged by the server
+  itself for the duration of the connection. Forwarded to the {wg-name}
+  backend only as part of a ban event, and only retained as long as the
+  ban is in force.
+
+| In-game name
+| Logged with every gameplay event. Forwarded to {wg-name} only when
+  attached to a ban event.
+
+| Ban events
+| Tier, ban-id, GUID, IP at time of ban, server-id, timestamp, and the
+  short public reason string. Retained by the {wg-name} backend for as
+  long as the ban is in force; warn-tier events are summarised after a
+  short window.
+|===
+
+[NOTE]
+====
+**TODO** — pin the exact retention windows and the privacy-policy URL on
+{vg-website} once the operator agreement is finalised. Replace this
+section with a link to the canonical policy when it is published.
+====
+
+[CAUTION]
+====
+This chapter intentionally omits any description of {wg-name}'s
+detection logic, heuristics, signatures, or fingerprinting strategy.
+Documenting those details would weaken the protection {wg-name} provides
+without giving honest server admins or players any actionable
+information. Server admins should treat {wg-name} as a black box: keep
+the protected build up to date and the registration current; everything
+else is the {wg-name} team's job.
+====
