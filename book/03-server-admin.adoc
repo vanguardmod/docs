@@ -1,0 +1,296 @@
+[[server-admin]]
+= Server Admin
+
+The Admin System is a collection of commands used to aid in server
+administration. It allows a user to issue text-based commands from a variety
+of sources which are then executed on the game server. The system has been
+influenced by the {et-name-abbr} mod community's familiarity with
+shrubbot-style commands, and {vg-name} maintains some cosmetic familiarity for
+admins migrating from {mod-jaymod}, {mod-noquarter}, or {mod-silent}.
+
+[NOTE]
+====
+The cvar names, command names, and privilege flags described in this chapter
+follow the conventions established by {mod-jaymod} and the broader
+shrubbot-derived mod family. The exact spelling of a given cvar or command
+may differ in your specific {vg-name} version — verify against the cvar list
+exposed by the running server (`cvarlist`) and the output of `!help` if in
+doubt.
+====
+
+== Synopsis
+
+Admin commands are short text strings prefixed with `!`, followed by zero or
+more arguments. They can be issued from any of the following sources, and
+behave identically regardless of source (subject to the privileges described
+in <<privileges>>):
+
+[cols="1,3",options="header",frame=all]
+|===
+| Source                  | How
+| Client console          | `!command ARG…` — typed in the in-game console
+| Chat (global)           | `!command ARG…` — typed in the global say buffer
+| Team chat               | `!command ARG…` — typed in team say
+| Fireteam chat           | `!command ARG…` — typed in fireteam say
+| Say-binding             | `bind X "say !command ARG…"` — fired by a key
+| Remote console (rcon)   | `/rcon !command ARG…` — from a connected client
+| Server console          | `!command ARG…` — typed at the dedicated console
+|===
+
+The dedicated server console runs every command at the highest privilege
+level. From a client, the privilege level is whatever your slot is granted
+through the admin file (see <<managing-acls>>).
+
+A built-in `!help` command lists the commands available to the issuing user
+at their current privilege level. `!help COMMAND` prints usage for a
+specific command.
+
+[source,console]
+----
+] !help
+] !help banuser
+----
+
+== Operation
+
+The admin system reads its configuration from a flat file on the server,
+referenced by a cvar:
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| `g_admin`
+| Path to the admin configuration file relative to the mod's `fs_game`
+  directory. Holds level definitions, user records, and ACL grants.
+| `g_adminLog`
+| Path to the admin command log. Every executed admin command is appended
+  to this file with a timestamp, the issuing user, the source, and the
+  arguments. Used for moderation review and post-incident audit.
+|===
+
+[NOTE]
+====
+**TODO** — verify the exact cvar names and default paths against the
+running mod. The names above follow {mod-jaymod} convention; {vg-name} may
+expose them under a different prefix (e.g. a `vg_admin`-family). When the
+boot banner is finalised it will state the active path.
+====
+
+Reload the admin file in-place without a server restart:
+
+[source,console]
+----
+] /rcon !readconfig
+----
+
+`!readconfig` re-reads the file at `g_admin` and applies the new level and
+user definitions to all currently connected players.
+
+[[quickstart-checklist]]
+== Quickstart checklist
+
+A condensed walkthrough from a fresh server install to a working admin
+roster.
+
+. **Set an rcon password.** In `server.cfg`:
++
+[source,console]
+----
+set rconpassword "CHANGEME"
+----
++
+Restart the server. From a client, log in:
++
+[source,console]
+----
+] /rcon login CHANGEME
+----
+
+. **Verify the admin system is alive.** From the client console:
++
+[source,console]
+----
+] /rcon !admintest
+----
++
+On a stock install with no users defined, `!admintest` reports your
+slot's level (typically `0`).
+
+. **Create the admin file** (path matches `g_admin`):
++
+[source,console]
+----
+$ touch ~/etlserver/vanguard/admin.dat
+----
++
+Then issue `!readconfig` so the mod opens it.
+
+. **Add the head-admin level** with full privileges. From rcon:
++
+[source,console]
+----
+] /rcon !levadd 100 "Head Admin"
+] /rcon !levedit 100 -acl +@all
+----
+
+. **Add a moderator level** with a curated ACL:
++
+[source,console]
+----
+] /rcon !levadd 50 "Moderator"
+] /rcon !levedit 50 -acl +@commands -C/banuser -B/banPermanent
+----
+
+. **Add a donator level** that grants only voting immunity and a custom
+  greeting:
++
+[source,console]
+----
+] /rcon !levadd 10 "Donator"
+] /rcon !levedit 10 -acl +B/voteImmunity
+----
+
+. **Promote a player.** With the target connected in slot 3:
++
+[source,console]
+----
+] /rcon !setlevel 3 100
+----
+
+. **Persist.** All `!levadd`, `!levedit`, `!useredit`, and `!setlevel`
+  changes are written to the admin file immediately. The server console
+  prints a confirmation line for each write.
+
+. **Audit.** Tail the file referenced by `g_adminLog` to see every admin
+  command as it is executed.
+
+[[privileges]]
+== Privileges
+
+A privilege is a single right held by a level or by an individual user.
+Privileges are grouped into three categories:
+
+Pseudo privileges::
+  Group selectors that expand to many real privileges. Useful for granting
+  a sweeping set of rights in one entry.
++
+[cols="1,3",options="header",frame=all]
+|===
+| Pseudo        | Expands to
+| `@all`        | Every behaviour and every command
+| `@behaviors`  | Every behaviour, no commands
+| `@commands`   | Every command, no behaviours
+|===
+
+Behaviours::
+  Passive rights — things the user is allowed *to be*, not commands they
+  can *issue*. Examples (canonical {mod-jaymod} names; verify against your
+  release):
++
+[cols="1,3",options="header",frame=all]
+|===
+| Behaviour            | Meaning
+| `B/balanceImmunity`  | Exempt from team-balance auto-shuffle
+| `B/banPermanent`     | Bans this user issues are permanent rather than time-limited
+| `B/voteImmunity`     | Cannot be the target of a callvote (e.g. `!callvote kick`)
+| `B/seeHidden`        | Sees admins who are hidden via `!hide`
+| `B/silentLogin`      | Does not announce admin-login on connect
+|===
+
+Commands::
+  The right to issue a specific `!command`. Spelled `C/<command>` in the
+  ACL grammar:
++
+[cols="1,3",options="header",frame=all]
+|===
+| Grant           | Effect
+| `C/banuser`     | May issue `!banuser`
+| `C/setlevel`    | May issue `!setlevel`
+| `C/kick`        | May issue `!kick`
+| `C/mute`        | May issue `!mute`
+| `C/help`        | May issue `!help` (typically granted to all levels)
+|===
+
+[NOTE]
+====
+**TODO** — produce the exhaustive behaviour and command list for the
+running {vg-name} version. The lists above are representative, not
+authoritative; the full enumeration belongs in <<commands>> once the
+per-command pages exist.
+====
+
+[[managing-acls]]
+== Managing ACLs
+
+ACL entries are applied to a level (`!levedit`) or to a single user
+(`!useredit`) using the `-acl` flag and a sequence of grants:
+
+[cols="1,3",options="header",frame=all]
+|===
+| Operator | Meaning
+| `+X`     | Grant `X`
+| `-X`     | Deny `X` (overrides earlier grants on the same entry)
+| `!X`     | Clear (remove) any prior `X` entry, neither granting nor denying
+|===
+
+Order matters: grants and denies are applied left-to-right.
+
+`!levedit LEVEL -acl …`::
+  Edit the ACL of a level. All users at this level inherit the result.
+  Useful for broad-stroke role definitions (Head Admin, Moderator,
+  Donator).
+
+`!useredit USER -acl …`::
+  Edit the ACL of a single user, identified by GUID or by slot. The
+  user's ACL is layered *on top of* their level's ACL. Useful for
+  per-user exceptions without inventing a new level.
+
+Two common patterns:
+
+. **Grant everything except a few risky commands** to a moderator level:
++
+[source,console]
+----
+] /rcon !levedit 50 -acl +@commands -C/banuser -C/setlevel
+----
+
+. **Promote a single user above their level** without changing the level
+  itself (e.g. give one moderator the right to ban):
++
+[source,console]
+----
+] /rcon !useredit GUID -acl +C/banuser
+----
+
+== Examples
+
+.Donator level with vote immunity only
+[source,console]
+----
+] /rcon !levadd 10 "Donator"
+] /rcon !levedit 10 -acl +B/voteImmunity
+----
+
+.Retroactive ban on a player who already disconnected
+[source,console]
+----
+] /rcon !banuser -guid GUID -duration 7d -reason "wallhack — see demo r1m3"
+----
+
+.Remove a stale level definition
+[source,console]
+----
+] /rcon !levdel 25
+----
+
+.Tighten an existing level's ACL without rebuilding it
+[source,console]
+----
+] /rcon !levedit 50 -acl -C/banuser !B/banPermanent
+----
+
+[NOTE]
+====
+**TODO** — once <<commands>> is fully populated, replace the inline command
+references in this chapter (`!banuser`, `!setlevel`, etc.) with `<<…>>`
+cross-references to the corresponding command pages.
+====
