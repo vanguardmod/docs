@@ -1,0 +1,90 @@
+[[cup-vs-fun-mode]]
+= Cup Mode vs Fun Mode
+
+{vg-name} ships two distinct play profiles, gated by a single master cvar:
+
+* `vg_fun 0` *(default, **Cup Mode**)* — strict, ESL-orthodox.
+  Sub-cvars are locked to cup-defaults. No movement gimmicks, no class
+  restrictions outside what is canonical for competitive play, no map-affecting
+  fun toys.
+* `vg_fun 1` *(**Fun Mode**)* — public-server feature set unlocked.
+  All `vg_fun_*` toys become tunable.
+
+[IMPORTANT]
+====
+{wg-name} (the anti-cheat) is **active in both modes**. Fun Mode does not
+disable cheat detection.
+====
+
+== The master switch
+
+See <<cvar.vg_fun>> for the full reference. In short:
+
+[cols="1,3",options="header",frame=all]
+|===
+| Mode             | What it changes
+
+| `vg_fun 0` (cup)
+| All `vg_fun_*` cvars are locked to cup-default and ignored if set.
+  Stats are tagged `mode=cup` and feed the **cup leaderboard** at
+  {vg-website}.
+
+| `vg_fun 1` (fun)
+| All `vg_fun_*` cvars become tunable. Stats are tagged `mode=fun` and feed
+  the **fun leaderboard**, which is rendered separately on player profiles.
+|===
+
+The server announces the active mode to every connecting client. The
+announcement is informational — the mode is set server-side via
+<<cvar.vg_fun>> and cannot be changed by clients.
+
+=== Mode announcement
+
+A connecting client is told which mode the server is running so they
+know in advance whether the session counts toward the cup leaderboard or
+the fun leaderboard.
+
+[NOTE]
+====
+**TODO** — quote the exact announcement format (chat line, console
+print, centerprint, or connect-time `print` packet) and the trigger
+moment (on `ClientBegin`, on first spawn, or on every map_restart).
+The placeholder shape is something like:
+
+  This server is running {vg-name} in **Cup Mode** — stats count toward the cup leaderboard.
+
+Update this section once the announcement is finalised in the v0.5.3
+release notes.
+====
+
+== Stats integrity
+
+Cup integrity is protected by the leaderboard separation: a player's cup
+stats are never polluted by a frag-fest on a `vg_fun 1` server. Combined
+profile pages on {vg-website} render both leaderboards side-by-side, but the
+cup ranking is never mixed with fun-mode kills.
+
+== Locked sub-cvars
+
+When `vg_fun 0` is active, every cvar in the `vg_fun_*` family is forced
+to its cup-default regardless of `cfg` or `rcon` writes. Attempts to set
+a locked cvar from a config file or via `rcon` are silently ignored
+(the cvar value snaps back to its cup-default).
+
+The table below is the contract: each row is one locked cvar, its
+cup-default value, and the range it is allowed to take when `vg_fun 1`
+unlocks it.
+
+[cols="2,1,3",options="header",frame=all]
+|===
+| Cvar               | Cup default | Fun-mode range / notes
+
+| _example row_      | `0`         | `0` or `1` — example only; replace with real entries.
+|===
+
+[NOTE]
+====
+**TODO** — populate this table from the v0.5.3 release that ships the
+master switch. New rows should be appended in alphabetical order on the
+`vg_fun_*` cvar name. Track open entries in the v0.5.3 release notes.
+====
