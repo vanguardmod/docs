@@ -69,10 +69,22 @@ referenced by a cvar:
 
 [NOTE]
 ====
-**TODO** — verify the exact cvar names and default paths against the
-running mod. The names above follow {mod-jaymod} convention; {vg-name} may
-expose them under a different prefix (e.g. a `vg_admin`-family). When the
-boot banner is finalised it will state the active path.
+The {etl-name} engine does **not** ship a stock `g_admin` / `g_adminLog`
+cvar pair — upstream {etl-name} bundles WolfAdmin (a Lua-scripted
+shrubbot equivalent) instead. The cvar names above follow the
+shrubbot-derived convention adopted by {mod-jaymod}, {mod-noquarter},
+and {mod-silent}; the actual cvar exposed by {vg-name} on the running
+server may differ.
+
+**TODO** — pin the spelling and default path of the {vg-name}-side
+admin-config cvar (`g_admin` vs `vg_admin` vs other) against the
+shipped mod. Until then, verify on your install with:
+
+[source,console]
+----
+] /rcon cvarlist g_admin*
+] /rcon cvarlist vg_admin*
+----
 ====
 
 Reload the admin file in-place without a server restart:
