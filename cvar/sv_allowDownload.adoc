@@ -1,0 +1,47 @@
+[[cvar.sv_allowDownload]]
+=== sv_allowDownload
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; conventionally `0` (clients ship paks themselves)
+| Scope         | server
+|===
+
+Master enable for the auto-download system. When enabled, a client that
+is missing one of the server's required paks (e.g. the {vg-name} mod
+PK3, a custom map) is offered the file via the engine's download
+channel.
+
+Two transport options are available; both gated by this cvar:
+
+* **UDP** in-protocol download — slow, single-stream, eats server
+  uplink. Used when no HTTP redirect is configured.
+* **HTTP redirect** via <<cvar.sv_wwwDownload>> + <<cvar.sv_wwwBaseURL>>
+  — much faster, off-loads the bandwidth.
+
+==== Examples
+
+.Public server (downloads on, HTTP preferred)
+[source]
+----
+set sv_allowDownload  1
+set sv_wwwDownload    1
+set sv_wwwBaseURL     "http://example.org/etpaks"
+----
+
+.Cup server (clients are expected to ship paks themselves)
+[source]
+----
+set sv_allowDownload 0
+----
+
+==== See also
+
+* <<cvar.sv_wwwDownload>>
+* <<cvar.sv_wwwBaseURL>>
+* <<cvar.sv_wwwDlDisconnected>>
+* <<cvar.sv_pure>>

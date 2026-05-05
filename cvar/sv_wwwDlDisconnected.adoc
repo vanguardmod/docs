@@ -1,0 +1,35 @@
+[[cvar.sv_wwwDlDisconnected]]
+=== sv_wwwDlDisconnected
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+When enabled, the server tells a downloading client to **disconnect**
+from the game while the HTTP-redirect transfer runs, then reconnect
+when the file lands. This frees the server's player slot for the
+duration of the download — useful on a busy public server where a
+slow client otherwise occupies a slot for minutes.
+
+Has no effect unless <<cvar.sv_wwwDownload>> = `1`.
+
+==== Examples
+
+.Public server: free the slot during downloads
+[source]
+----
+set sv_wwwDownload       1
+set sv_wwwDlDisconnected 1
+----
+
+==== See also
+
+* <<cvar.sv_wwwDownload>>
+* <<cvar.sv_wwwBaseURL>>
+* <<cvar.sv_allowDownload>>

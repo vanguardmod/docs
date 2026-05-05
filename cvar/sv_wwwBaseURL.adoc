@@ -1,0 +1,37 @@
+[[cvar.sv_wwwBaseURL]]
+=== sv_wwwBaseURL
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `""` (empty)
+| Type          | string (URL prefix, no trailing slash)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Base URL used by the HTTP-redirect download path. The engine appends the
+relative pak path to this prefix and tells the missing-pak client to
+fetch it. Requires <<cvar.sv_wwwDownload>> = `1` to take effect.
+
+The HTTP server you point this at should mirror the same `vanguard/`
+layout (and any custom `etmain/` content you serve) so that a request
+for `vanguard/vanguard-vX.Y.Z.pk3` resolves to a real file. Plain
+static-file hosting (Apache, nginx, S3) is sufficient — no special
+{etl-name}-aware backend is required.
+
+==== Examples
+
+.Set in `server.cfg`
+[source]
+----
+set sv_wwwDownload 1
+set sv_wwwBaseURL  "http://example.org/etpaks"
+----
+
+==== See also
+
+* <<cvar.sv_wwwDownload>>
+* <<cvar.sv_wwwDlDisconnected>>
+* <<cvar.sv_allowDownload>>

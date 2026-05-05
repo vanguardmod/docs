@@ -1,0 +1,41 @@
+[[cvar.sv_minRate]]
+=== sv_minRate
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (no per-client floor)
+| Type          | int (bytes per second)
+| Flags         | `CVAR_ARCHIVE_ND` `CVAR_SERVERINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; cup convention is `15000` or higher
+| Scope         | server
+|===
+
+Per-client uplink rate floor, in bytes per second. The server clamps any
+client's `rate` cvar **up** to this value on connect. `0` disables the
+floor.
+
+The pairing with <<cvar.sv_maxRate>> is asymmetric:
+`sv_minRate`/`sv_maxRate` together force the per-client `rate` into a
+chosen window. On a high-tickrate cup server the floor stops a client
+from accidentally throttling themselves to a value below what
+<<cvar.sv_fps,40 Hz snapshots>> need.
+
+==== Examples
+
+.Public server with a modest floor
+[source]
+----
+set sv_minRate 5000
+----
+
+.Cup server with a high floor
+[source]
+----
+set sv_minRate 15000
+----
+
+==== See also
+
+* <<cvar.sv_maxRate>>
+* <<cvar.sv_fps>>

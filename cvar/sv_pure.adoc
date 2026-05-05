@@ -1,0 +1,42 @@
+[[cvar.sv_pure]]
+=== sv_pure
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_SYSTEMINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | should remain `1`
+| Scope         | server
+|===
+
+When enabled, the server requires every connecting client to load the
+exact same set of paks (PK3 archives) the server has loaded — no
+extras, no substitutions. Clients that fail the check are refused.
+
+This is a baseline anti-cheat measure: it prevents a client from
+running a custom asset pack that, for example, removes wall geometry or
+swaps player models for high-visibility versions. Any cup-eligible
+configuration **must** keep this `1`.
+
+[CAUTION]
+====
+Disabling `sv_pure` lets connecting clients use modified assets the
+server cannot verify. Treat `sv_pure 0` as a debugging-only setting.
+{wg-name} (the {vg-name} anti-cheat) does not substitute for `sv_pure`
+— both apply.
+====
+
+==== Examples
+
+.Default (correct for almost every server)
+[source]
+----
+set sv_pure 1
+----
+
+==== See also
+
+* <<cvar.sv_allowDownload>>
+* <<wolfguard>>

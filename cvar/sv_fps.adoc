@@ -1,0 +1,48 @@
+[[cvar.sv_fps]]
+=== sv_fps
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `20`
+| Type          | int (Hz)
+| Flags         | `CVAR_SYSTEMINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; cup convention is `40`
+| Scope         | server (must match on client side as `cl_maxpackets`)
+|===
+
+Server simulation rate, in ticks per second. The server runs its game
+loop, processes input, and sends snapshots to clients at this rate.
+
+Higher tick rates give smoother movement and more accurate hit
+registration at the cost of CPU and uplink bandwidth. The {etl-name}
+engine ships with `20 Hz` as the conservative public-server default.
+Cup play conventionally uses `40 Hz` so that snapshots are dense enough
+for the multi-region capsule (<<multiregion-hitbox>>) lag-comp window
+to stay tight.
+
+[NOTE]
+====
+Whether `vg_fun 0` actively forces `sv_fps 40` is a {vg-name}
+implementation choice — see <<cup-vs-fun-mode>>. Treat the cup
+convention as a strong recommendation regardless.
+====
+
+==== Examples
+
+.Public server (engine default)
+[source]
+----
+set sv_fps 20
+----
+
+.Cup server
+[source]
+----
+set sv_fps 40
+----
+
+==== See also
+
+* <<cvar.sv_maxRate>>
+* <<multiregion-hitbox>>

@@ -1,0 +1,37 @@
+[[cvar.sv_wwwDownload]]
+=== sv_wwwDownload
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Enables the HTTP-redirect path of the auto-download system. When `1`,
+the server tells a missing-pak client to fetch the file from the URL at
+<<cvar.sv_wwwBaseURL>> over plain HTTP, instead of streaming it through
+the slow UDP in-protocol channel.
+
+This requires <<cvar.sv_allowDownload>> = `1` and a working
+<<cvar.sv_wwwBaseURL>>. If the HTTP fetch fails, the engine falls back
+to UDP unless <<cvar.sv_wwwDlDisconnected>> is set.
+
+==== Examples
+
+.Public server with HTTP mirror
+[source]
+----
+set sv_allowDownload  1
+set sv_wwwDownload    1
+set sv_wwwBaseURL     "http://example.org/etpaks"
+----
+
+==== See also
+
+* <<cvar.sv_wwwBaseURL>>
+* <<cvar.sv_wwwDlDisconnected>>
+* <<cvar.sv_allowDownload>>

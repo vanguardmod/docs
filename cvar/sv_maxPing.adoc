@@ -1,0 +1,34 @@
+[[cvar.sv_maxPing]]
+=== sv_maxPing
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (no maximum)
+| Type          | int (milliseconds)
+| Flags         | `CVAR_ARCHIVE_ND` `CVAR_SERVERINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; cup convention is a regional cap (e.g. `150`)
+| Scope         | server
+|===
+
+Maximum ping a client may have. Connecting clients above this value are
+refused; existing clients whose ping rises above it during play are
+warned and eventually kicked.
+
+`0` disables the cap. The typical use is to keep wildly cross-regional
+clients off a regional server where their latency would unfairly burden
+the lag-comp window for the multi-region capsules
+(<<multiregion-hitbox>>).
+
+==== Examples
+
+.European cup server: 150 ms cap
+[source]
+----
+set sv_maxPing 150
+----
+
+==== See also
+
+* <<cvar.sv_minPing>>
+* <<multiregion-hitbox>>

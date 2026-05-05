@@ -1,0 +1,40 @@
+[[cvar.sv_maxRate]]
+=== sv_maxRate
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (no per-client cap)
+| Type          | int (bytes per second)
+| Flags         | `CVAR_ARCHIVE_ND` `CVAR_SERVERINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; cup convention is `45000` or higher
+| Scope         | server
+|===
+
+Per-client uplink rate cap, in bytes per second. The server clamps any
+client's `rate` cvar to this value on connect. `0` disables the cap and
+honours whatever `rate` the client requests.
+
+A cap protects servers with limited uplink against any one client
+demanding too much, but on modern hosting the historical low cap
+(25000) is restrictive — cup play with `sv_fps 40` benefits from
+`45000` or higher.
+
+==== Examples
+
+.Public server with conservative cap
+[source]
+----
+set sv_maxRate 25000
+----
+
+.Cup server (high tick rate, generous cap)
+[source]
+----
+set sv_maxRate 45000
+----
+
+==== See also
+
+* <<cvar.sv_minRate>>
+* <<cvar.sv_fps>>

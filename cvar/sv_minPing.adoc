@@ -1,0 +1,32 @@
+[[cvar.sv_minPing]]
+=== sv_minPing
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (no minimum)
+| Type          | int (milliseconds)
+| Flags         | `CVAR_ARCHIVE_ND` `CVAR_SERVERINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; cup convention is `0` (do not exclude on min-ping)
+| Scope         | server
+|===
+
+Minimum ping a client must have to play. Originally intended to keep
+LAN-tier clients off public servers (so they cannot abuse near-zero
+latency), this is now mostly historical — modern good-faith play does
+not benefit from it.
+
+`0` disables the floor. Setting a non-zero value rejects connecting
+clients whose ping is *lower* than the floor.
+
+==== Examples
+
+.Default — no minimum
+[source]
+----
+set sv_minPing 0
+----
+
+==== See also
+
+* <<cvar.sv_maxPing>>

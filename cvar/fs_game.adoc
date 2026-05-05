@@ -1,0 +1,46 @@
+[[cvar.fs_game]]
+=== fs_game
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `""` (empty — engine selects `etmain`)
+| Type          | string (game directory name)
+| Flags         | `CVAR_INIT` `CVAR_SYSTEMINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | locked — set to `vanguard`, never changed mid-session
+| Scope         | server (must match on client)
+|===
+
+The game directory the engine loads gamecode and assets from. This is
+**the** switch that turns an {etl-name} server into a {vg-name} server:
+without `fs_game vanguard` the engine loads the {etl-name} gamecode
+instead.
+
+The `_INIT` flag means it is read once at engine startup and cannot be
+changed at runtime; you must pass it on the command line, not from a
+later `set` in `server.cfg`.
+
+==== Examples
+
+.{vg-name} server start command (Linux)
+[source,console]
+----
+$ etlded \
+    +set dedicated 2 \
+    +set fs_game vanguard \
+    +exec server.cfg \
+    +map oasis
+----
+
+.Verify the active game directory at runtime
+[source,console]
+----
+] /rcon serverinfo
+----
++
+The `gamename` field in the output should be `vanguard`.
+
+==== See also
+
+* <<installation>>
+* <<verifying-the-installation>>
