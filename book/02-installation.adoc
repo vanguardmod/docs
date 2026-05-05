@@ -37,12 +37,10 @@ no special compiler or runtime needed at the server host.
   build (stats, anti-cheat handshake, ban-list sync) — see <<wolfguard>>.
 |===
 
-[NOTE]
-====
-**TODO** — pin the minimum supported {etl-name} version once the build matrix
-is finalised for v0.5.x. Until then, build against the latest stable {etl-name}
-release.
-====
+{vg-name} is built against the {etl-name} `2.83.x` source line and tested
+against the corresponding stable releases. Any newer {etl-name} stable
+release should also work; older lines are not supported. Get a fresh
+{etl-name} server from {etl-website}.
 
 [[client-requirements]]
 == Client requirements
@@ -70,71 +68,435 @@ these — UDP-only auto-download is slow.
 
 == Quick install
 
-Five steps from a clean {etl-name} server to a {vg-name} server.
+Five steps from "I just downloaded {etl-name}" to "my server is running
+{vg-name}".
 
-. **Get the release PK3.** Download the latest `vanguard-vX.Y.Z.pk3` from the
-  GitHub releases page at {vg-repo}/releases.
+. **Get the {etl-name} server.** Download the dedicated-server package
+  for your platform from {etl-website} and unpack it into a directory
+  of your choice. The result is a layout like this:
++
+[source,console]
+----
+$ ls ~/etlserver
+etlded            # the dedicated server binary (Linux)
+etmain/           # stock ET assets (pak0/1/2.pk3)
+legacy/           # the ETLegacy mod folder
+----
 
-. **Drop the PK3 into a new `vanguard/` folder** alongside `etmain/` in your
-  {etl-name} server's home directory:
+. **Drop the {vg-name} PK3 into a new `vanguard/` folder** next to
+  `etmain/`:
 +
 [source,console]
 ----
 $ mkdir -p ~/etlserver/vanguard
 $ cp vanguard-vX.Y.Z.pk3 ~/etlserver/vanguard/
 ----
++
+The PK3 itself is the entire mod; nothing else needs to be unpacked.
 
-. **Add `+set fs_game vanguard`** to your server start command (or set
-  `fs_game` in the config). For example:
+. **Create your `server.cfg`.** This is the single most important file
+  you will write. Pick one of the three annotated templates in
+  <<config-walkthrough>>, copy it, change the hostname and the two
+  passwords, and save it as `~/etlserver/vanguard/server.cfg`.
+
+. **Start the server.** Point the dedicated-server binary at your new
+  config:
 +
 [source,console]
 ----
-$ etlded +set dedicated 2 \
-         +set fs_game vanguard \
-         +exec server.cfg
+$ ~/etlserver/etlded \
+    +set dedicated 2          # 2 = public dedicated, 1 = LAN dedicated
+    +set fs_game vanguard     # this is *the* switch that loads the mod
+    +exec server.cfg          # your annotated server.cfg from step 3
+    +map oasis                # any stock ET map; oasis ships with the engine
 ----
++
+Watch the console for the {vg-name} boot banner. A successful boot
+writes one line containing `{vg-name-colored}` and the version string.
 
-. **Start the server** and watch the console for the {vg-name} boot banner.
-  A successful boot writes one log line containing `{vg-name-colored}` and
-  the version string.
-
-. **Verify with rcon.** Connect a client, open the in-game console, and
-  issue:
+. **Verify the install.** Connect a client to your server, open the
+  in-game console (default key: kbd:[\]), and run:
 +
 [source,console]
 ----
-] /rcon login PASSWORD
+] /rcon login YOUR-RCON-PASSWORD
 ] /rcon !admintest
 ----
 +
-A successful `!admintest` reply confirms the admin system is wired up
-against your `g_admin` cvars (see <<server-admin>>).
+A successful `!admintest` reply confirms the admin system is wired up.
+The full verification checklist lives in
+<<verifying-the-installation>>.
 
+[[config-walkthrough]]
+== Annotated `server.cfg` walkthrough
+
+This section is the heart of the chapter. Three complete `server.cfg`
+profiles are reproduced below, each with every cvar commented inline so
+that someone who has never run an {et-name-abbr} server before can read
+the file top-to-bottom and understand what each line does. Pick the
+profile that matches your intent, copy it, change at least the hostname
+and the two passwords, and save it as `vanguard/server.cfg`.
+
+[CAUTION]
+====
+**Never** ship the example passwords to production. Replace
+`CHANGEME-rcon` and `CHANGEME-private` with strong, unique secrets
+*before* the server is reachable from the public internet. Do not
+commit your live `server.cfg` to a public Git repository if it
+contains real passwords.
+====
+
+[NOTE]
+====
+The cvars referenced below come from one of three places:
+
+* **Engine** ({etl-name} server) — `sv_*`, `com_*`, `net_*`, `fs_*`
+* **Game** ({etl-name} game module) — `g_*`, `match_*`, `vote_allow_*`
+* **{vg-name}** — `vg_*`, `vanguard_*`
+
+Every cvar has its own reference page in <<cvars>>. Where a cvar has a
+page, it is linked on first appearance.
+====
+
+=== Profile 1 — `public-newbie.cfg`
+
+A friendly, low-skill public server. Fun Mode (<<cvar.vg_fun>>) is on,
+warmup is permissive, friendly fire is off. Good for a community drop-in
+server where new players rotate through.
+
+[source,subs="attributes+"]
+----
+// =============================================================
+// public-newbie.cfg — {vg-name}, friendly public profile
+// =============================================================
+// Audience:  drop-in public server, mixed skill, mostly newbies
+// Mode:      Fun Mode (vg_fun 1)
+// Stats:     fun-leaderboard
+// Assumes:   running under fs_game vanguard
+// =============================================================
+
+// --- SERVER IDENTITY ---------------------------------------------
+set sv_hostname  "{vg-name-colored} ^7Public Server"   // shows in browser
+set g_motd       "Welcome — type !help in chat for commands"
+
+// --- CAPACITY & ACCESS -------------------------------------------
+set sv_maxclients       24                  // total slots incl. spectators
+set sv_privateClients   4                   // 4 of those are reserved
+set sv_privatePassword  "CHANGEME-private"  // password for reserved slots
+set rconPassword        "CHANGEME-rcon"     // remote-admin password
+set g_password          ""                  // empty = no join password
+
+// --- NETWORKING --------------------------------------------------
+set sv_fps              20                  // server tick rate (Hz)
+set sv_maxRate          25000               // per-client uplink cap (bytes/s)
+set sv_minRate          5000                // per-client uplink floor
+set sv_pure             1                   // require matching client paks
+set sv_allowDownload    1                   // allow UDP auto-download
+set sv_wwwDownload      1                   // prefer HTTP redirect
+set sv_wwwBaseURL       "http://example.org/etpaks"  // your HTTP mirror
+set sv_wwwDlDisconnected 1                  // client downloads disconnected
+
+// --- SECURITY & FLOOD --------------------------------------------
+set sv_floodProtect     1                   // engine-side packet flood guard
+set g_floodProtection   1                   // mod-side chat flood guard
+set g_floodLimit        5                   // max messages in window
+set g_floodWait         1000                // window length (ms)
+set g_inactivity        180                 // kick AFK after N seconds (0 = off)
+
+// --- GAMETYPE & MATCH --------------------------------------------
+set g_gametype          4                   // 4 = Campaign (newbie-friendly)
+set g_warmup            30                  // warmup length (s)
+set g_doWarmup          1                   // run a warmup before match
+set g_friendlyFire      0                   // off — no team-kill grief
+set g_teamForceBalance  1                   // auto-shuffle uneven teams
+
+// --- VOTES (mod-side game cvars; defaults are usually fine) ------
+set vote_allow_kick     1
+set vote_allow_map      1
+set vote_allow_nextmap  1
+
+// --- MAPS & ROTATION ---------------------------------------------
+// Map rotation is driven by chaining 'map' / 'set nextmap' calls in
+// a separate map_rotation.cfg — see <<map-rotation>> below.
+exec map_rotation.cfg
+
+// --- LOGGING -----------------------------------------------------
+set g_log               "vanguard-public.log"
+set g_logSync           1                   // flush every line (safer)
+
+// --- VANGUARDMOD MASTER SWITCH -----------------------------------
+set vg_fun              1                   // 1 = Fun Mode, 0 = Cup Mode
+set vanguard_hitbox_strict 1                // multi-region capsules, no AABB fallback
+
+// =============================================================
+// END public-newbie.cfg
+// =============================================================
+----
+
+The cvars referenced above each have their own page:
+<<cvar.sv_hostname>>, <<cvar.g_motd>>, <<cvar.sv_maxclients>>,
+<<cvar.sv_privateClients>>, <<cvar.sv_privatePassword>>,
+<<cvar.rconPassword>>, <<cvar.g_password>>, <<cvar.sv_fps>>,
+<<cvar.sv_maxRate>>, <<cvar.sv_minRate>>, <<cvar.sv_pure>>,
+<<cvar.sv_allowDownload>>, <<cvar.sv_wwwDownload>>,
+<<cvar.sv_wwwBaseURL>>, <<cvar.sv_wwwDlDisconnected>>,
+<<cvar.sv_floodProtect>>, <<cvar.g_floodProtection>>,
+<<cvar.g_floodLimit>>, <<cvar.g_floodWait>>, <<cvar.g_inactivity>>,
+<<cvar.g_gametype>>, <<cvar.g_warmup>>, <<cvar.g_doWarmup>>,
+<<cvar.g_friendlyFire>>, <<cvar.g_teamForceBalance>>,
+<<cvar.g_log>>, <<cvar.g_logSync>>, <<cvar.vg_fun>>,
+<<cvar.vanguard_hitbox_strict>>.
+
+=== Profile 2 — `cup-eslruleset.cfg`
+
+A cup-orthodox match server. Cup Mode (<<cvar.vg_fun>> = `0`) locks the
+`vg_fun_*` family to its cup-defaults. Friendly fire is on, warmup is
+short, the server runs at high tick rate, and the multi-region hitbox is
+strict by default.
+
+[source,subs="attributes+"]
+----
+// =============================================================
+// cup-eslruleset.cfg — {vg-name}, cup-ruleset profile
+// =============================================================
+// Audience:  ESL / league cup matches, paired teams
+// Mode:      Cup Mode (vg_fun 0) — sub-cvars locked to cup-defaults
+// Stats:     cup-leaderboard
+// Assumes:   running under fs_game vanguard, protected build with WolfGuard
+// =============================================================
+
+// --- SERVER IDENTITY ---------------------------------------------
+set sv_hostname  "{vg-name-colored} ^7Cup Server #1"
+set g_motd       "Cup match server — refs only via !levedit"
+
+// --- CAPACITY & ACCESS -------------------------------------------
+set sv_maxclients       14                  // 6v6 + 2 ref/spec slots
+set sv_privateClients   2                   // both spec slots private
+set sv_privatePassword  "CHANGEME-private"  // distributed to refs only
+set rconPassword        "CHANGEME-rcon"     // strong; rotate per cup
+set g_password          ""                  // teams join via private slots
+
+// --- NETWORKING --------------------------------------------------
+set sv_fps              40                  // cup tick rate (40 Hz)
+set sv_maxRate          45000               // higher per-client uplink
+set sv_minRate          15000               // higher floor for cup play
+set sv_pure             1                   // strict pak match
+set sv_allowDownload    0                   // cup clients ship paks themselves
+set sv_wwwDownload      0
+set sv_minPing          0                   // no min-ping kicks during cup
+set sv_maxPing          150                 // hard ping cap
+
+// --- SECURITY & FLOOD --------------------------------------------
+set sv_floodProtect     1
+set g_floodProtection   1
+set g_floodLimit        4
+set g_floodWait         1000
+set g_inactivity        0                   // never kick AFK during cup
+
+// --- GAMETYPE & MATCH --------------------------------------------
+set g_gametype          2                   // 2 = WolfMP (Stopwatch)
+set g_warmup            10                  // short warmup
+set g_doWarmup          1
+set g_friendlyFire      1                   // ON — orthodox cup setting
+set match_minplayers    6                   // both teams full before match
+set match_readypercent  100                 // every player must !ready
+set match_warmupDamage  1                   // damage on during warmup
+set match_timeoutcount  3                   // tactical timeouts per side
+set g_complaintlimit    6                   // complaint kicks at 6 incidents
+
+// --- VOTES (locked down for cup) ---------------------------------
+set vote_allow_kick     0                   // refs handle removals
+set vote_allow_map      0                   // map order set by org
+set vote_allow_gametype 0
+set vote_allow_friendlyfire 0               // FF lock — cup-orthodox
+
+// --- MAPS & ROTATION ---------------------------------------------
+exec map_rotation.cfg
+
+// --- LOGGING -----------------------------------------------------
+set g_log               "vanguard-cup.log"
+set g_logSync           1                   // flush every line — required for cup audit
+
+// --- VANGUARDMOD MASTER SWITCH -----------------------------------
+set vg_fun              0                   // 0 = Cup Mode, locks vg_fun_* family
+set vanguard_hitbox_strict 1                // strict; no AABB fallback (cup-required)
+
+// =============================================================
+// END cup-eslruleset.cfg
+// =============================================================
+----
+
+Cvars introduced here that did not appear in Profile 1:
+<<cvar.sv_minPing>>, <<cvar.sv_maxPing>>, <<cvar.match_minplayers>>,
+<<cvar.match_readypercent>>, <<cvar.match_warmupDamage>>,
+<<cvar.match_timeoutcount>>, <<cvar.g_complaintlimit>>.
+
+=== Profile 3 — `practice.cfg`
+
+A solo / single-team practice server: short warmup, low capacity,
+friendly fire off, Fun Mode on so individual `vg_fun_*` toys can be
+flipped without ceremony.
+
+[source,subs="attributes+"]
+----
+// =============================================================
+// practice.cfg — {vg-name}, practice profile
+// =============================================================
+// Audience:  one team running drills; or a solo player rehearsing routes
+// Mode:      Fun Mode (vg_fun 1) — toys unlocked
+// Stats:     fun-leaderboard
+// Assumes:   private LAN or invite-only public; not cup-eligible by definition
+// =============================================================
+
+// --- SERVER IDENTITY ---------------------------------------------
+set sv_hostname  "{vg-name-colored} ^7Practice"
+set g_motd       "Practice server. Type /callvote map MAPNAME to switch."
+
+// --- CAPACITY & ACCESS -------------------------------------------
+set sv_maxclients       10
+set sv_privateClients   0
+set rconPassword        "CHANGEME-rcon"
+set g_password          "CHANGEME-join"     // join password keeps strangers out
+
+// --- NETWORKING --------------------------------------------------
+set sv_fps              40                  // high tick rate even for practice
+set sv_pure             1
+set sv_allowDownload    1
+set sv_wwwDownload      0                   // no HTTP mirror needed for invite-only
+
+// --- SECURITY & FLOOD --------------------------------------------
+set sv_floodProtect     1
+set g_floodProtection   1
+set g_inactivity        0                   // never kick AFK in practice
+
+// --- GAMETYPE & MATCH --------------------------------------------
+set g_gametype          2                   // Stopwatch — same as cup
+set g_warmup            5                   // very short — practice runs back-to-back
+set g_doWarmup          1
+set g_friendlyFire      0                   // off so drills don't end in TKs
+set match_minplayers    1                   // 1 player can run a session
+set match_warmupDamage  0                   // no damage during warmup
+
+// --- VOTES (open — single team / solo) ---------------------------
+set vote_allow_kick     1
+set vote_allow_map      1
+set vote_allow_nextmap  1
+set vote_allow_gametype 1
+
+// --- MAPS & ROTATION ---------------------------------------------
+// No rotation — stay on whatever map was loaded with +map.
+
+// --- LOGGING -----------------------------------------------------
+set g_log               "vanguard-practice.log"
+
+// --- VANGUARDMOD MASTER SWITCH -----------------------------------
+set vg_fun              1                   // 1 = Fun Mode, toys unlocked
+set vanguard_hitbox_strict 1                // strict — practice the cup hit model
+
+// =============================================================
+// END practice.cfg
+// =============================================================
+----
+
+[[map-rotation]]
+=== Map rotation
+
+The three profiles above all reference an external `map_rotation.cfg`
+file. {etl-name} does not ship a single `g_mapcycle` cvar; instead, a
+rotation is just a script that chains `map` and `set nextmap` calls.
+
+A representative `vanguard/map_rotation.cfg`:
+
+[source]
+----
+// loop oasis -> radar -> goldrush -> battery -> back to oasis
+set m1 "map oasis ; set nextmap vstr m2"
+set m2 "map radar ; set nextmap vstr m3"
+set m3 "map goldrush ; set nextmap vstr m4"
+set m4 "map battery ; set nextmap vstr m1"
+vstr m1
+----
+
+The trailing `vstr m1` kicks the chain off; the engine then re-evaluates
+`nextmap` on every map end and walks around the loop.
+
+=== Where the canonical example lives
+
+The three profiles in this chapter are deliberately reproduced as
+in-line listings — they are the *teaching* version, with every line
+explained. A *minimal*, copy-paste-ready `examples/server.cfg.example`
+lives alongside the mod source at {vg-repo} and is the single source of
+truth for the {vg-name} cvar inventory. The {vg-name} `config-builder`
+GUI under {vg-tools-repo} consumes the same example file.
+
+If you spot drift between this chapter and the example file in the main
+repo, the example file wins — file an issue against {vg-docs-repo} so
+the listings here can be brought back in line.
+
+[[verifying-the-installation]]
 == Verifying the installation
 
-After the server boots, three cheap checks confirm that {vg-name} is the
-active gamecode:
+Five smoke tests, in order. If all five pass, you have a working
+{vg-name} server.
 
-. **`serverinfo` cvar.** From the in-game console (or via `rcon`):
+. **Boot banner.** Watch the server console at startup. A successful
+  boot prints a single line containing `{vg-name-colored}` and the mod
+  version, identifying the loaded gamecode unambiguously.
++
+[NOTE]
+====
+**TODO** — quote the exact boot-banner format once it is finalised.
+The shape may shift across alpha releases; the literal text is
+intentionally not pinned here yet.
+====
+
+. **`serverinfo` reports the right `gamename`.** From a connected
+  client:
 +
 [source,console]
 ----
 ] /rcon serverinfo
 ----
 +
-Look for `gamename` set to `vanguard` (matching `fs_game`).
+Look for `gamename "vanguard"` (matching the value of
+<<cvar.fs_game>>). If `gamename` is `etmain` or `legacy`, your
+`+set fs_game vanguard` did not take.
 
-. **In-game mod menu.** Bring up the in-game UI; the active mod is shown
-  as `{vg-name-colored}` with the version string.
+. **`!admintest` reports your level.** With your rcon password set:
++
+[source,console]
+----
+] /rcon login YOUR-RCON-PASSWORD
+] /rcon !admintest
+----
++
+On a fresh install with no users defined, `!admintest` reports level
+`0`. Once you have created levels and assigned yourself one (see
+<<server-admin>>), the same command reports your assigned level.
 
-. **Boot log.** The server console prints one banner line on boot containing
-  the colored mod name and version. This line is the canonical
-  identification used by tooling.
+. **Multi-region hitbox is live.** Enable the diagnostic stream
+  (<<cvar.vanguard_hitbox_debug>>), fire one shot at any target, and
+  grep the log:
++
+[source,console]
+----
+$ tail -f vanguard-public.log | grep '^VG_DIAG:'
+----
++
+A `VG_DIAG:` line per shot confirms the multi-region capsule
+subsystem is initialised. Switch the cvar back to `0` after the
+test — the per-shot stream is verbose.
 
+. **{wg-name} is active (protected build only).** On a protected
+  build, the boot banner additionally prints a `{wg-name} active`
+  acknowledgement once the registration handshake with {vg-website}
+  completes. If the handshake fails the server falls back to
+  unregistered mode and is **not** cup-eligible until the handshake
+  succeeds.
++
 [NOTE]
 ====
-**TODO** — quote the exact boot-banner line format once it is finalised. The
-banner shape may shift across alpha releases.
+**TODO** — quote the exact `{wg-name} active` log line once finalised.
 ====
 
 == Upgrading from a previous version
