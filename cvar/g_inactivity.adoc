@@ -1,0 +1,34 @@
+[[cvar.g_inactivity]]
+=== g_inactivity
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled)
+| Type          | int (seconds)
+| Flags         | none
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `0` (do not kick AFK during a match)
+| Scope         | server
+|===
+
+Inactivity-kick timer. A player who has not provided input for this
+many seconds is forced into spectator mode (or kicked, depending on
+gametype). `0` disables the timer.
+
+Useful on busy public servers to free slots from idlers; should be
+disabled on cup servers, where a player legitimately holding position
+without input must not be removed mid-match.
+
+==== Examples
+
+.Public server: kick AFK after three minutes
+[source]
+----
+set g_inactivity 180
+----
+
+.Cup or practice server: never kick AFK
+[source]
+----
+set g_inactivity 0
+----

@@ -1,0 +1,32 @@
+[[cvar.g_floodLimit]]
+=== g_floodLimit
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `5`
+| Type          | int (messages)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Number of chat-class commands a client may issue within the
+<<cvar.g_floodWait>> window before the
+<<cvar.g_floodProtection,mod-side flood guard>> kicks in. Lower values
+are stricter.
+
+==== Examples
+
+.Stricter cup-server limit
+[source]
+----
+set g_floodLimit 4
+set g_floodWait  1000
+----
+
+==== See also
+
+* <<cvar.g_floodProtection>>
+* <<cvar.g_floodWait>>
+* <<cvar.sv_floodProtect>>

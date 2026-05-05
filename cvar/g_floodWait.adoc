@@ -1,0 +1,35 @@
+[[cvar.g_floodWait]]
+=== g_floodWait
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1000`
+| Type          | int (milliseconds)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Sliding-window length, in milliseconds, used by the
+<<cvar.g_floodProtection,mod-side flood guard>>. A client may issue
+<<cvar.g_floodLimit>> chat-class commands within this window before
+being throttled.
+
+Default `1000` (one second) plus default `g_floodLimit 5` allows up to
+five chat lines per second per client. Higher values widen the window
+and tolerate brief bursts followed by quiet; lower values penalise even
+short bursts.
+
+==== Examples
+
+.Default
+[source]
+----
+set g_floodWait 1000
+----
+
+==== See also
+
+* <<cvar.g_floodProtection>>
+* <<cvar.g_floodLimit>>

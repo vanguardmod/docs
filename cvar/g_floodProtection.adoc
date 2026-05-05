@@ -1,0 +1,38 @@
+[[cvar.g_floodProtection]]
+=== g_floodProtection
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; conventionally `1`
+| Scope         | server
+|===
+
+Master enable for the mod-side chat-flood-protection guard. When `1`,
+clients that issue more than <<cvar.g_floodLimit>> chat-class commands
+within the <<cvar.g_floodWait>> window are throttled.
+
+The mod-side guard handles chat, voice macros, vote calls, and other
+gameplay-visible commands. The engine-side
+<<cvar.sv_floodProtect,sv_floodProtect>> handles the lower-level
+reliable-command stream, and the {etl-name} game module disables it
+automatically when this cvar is `1` to avoid double-throttling.
+
+==== Examples
+
+.Default
+[source]
+----
+set g_floodProtection 1
+set g_floodLimit      5
+set g_floodWait       1000
+----
+
+==== See also
+
+* <<cvar.g_floodLimit>>
+* <<cvar.g_floodWait>>
+* <<cvar.sv_floodProtect>>

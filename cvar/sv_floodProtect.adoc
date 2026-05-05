@@ -1,0 +1,44 @@
+[[cvar.sv_floodProtect]]
+=== sv_floodProtect
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable; conventionally `1`
+| Scope         | server
+|===
+
+Engine-side flood-protection guard. Throttles certain reliable client
+commands so that a single client cannot spam the server into a stall.
+Operates one layer below the mod-side
+<<cvar.g_floodProtection,chat-flood guard>>: this protects the engine,
+that protects gameplay chat.
+
+[NOTE]
+====
+{etl-name}'s game module disables `sv_floodProtect` on boot if its own
+mod-side flood protection (<<cvar.g_floodProtection>>) is enabled,
+because the two layers throttle different command sets and the engine
+layer can mask mod commands. The mod boot prints an info line:
+`mod-sided flood protection enabled, disabling server-side protection.`
+
+In other words: if you want layered protection, run `g_floodProtection
+1` and let the mod manage the engine layer for you.
+====
+
+==== Examples
+
+.Default
+[source]
+----
+set sv_floodProtect 1
+----
+
+==== See also
+
+* <<cvar.g_floodProtection>>
+* <<cvar.g_floodLimit>>
+* <<cvar.g_floodWait>>
