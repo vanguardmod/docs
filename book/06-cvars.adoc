@@ -1,0 +1,164 @@
+[[cvars]]
+= Cvar Reference
+
+This chapter is the alphabetical, comprehensive reference for every cvar
+relevant to a {vg-name} server administrator. {vg-name}'s own cvars
+(`vg_*` and `vanguard_*`) are documented in full. The {etl-name}-inherited
+cvars that a {vg-name} admin must understand on day one are also
+documented here, in <<cvars-inherited>>, with their {etl-name} defaults
+and any {vg-name}-specific cup-mode behaviour called out.
+
+[NOTE]
+====
+**Convention** — every cvar lives in its own file under `cvar/` in the docs
+repository, modelled on {mod-jaymod}'s `doc/cvar/` layout. New cvars must be
+`include::`d below in alphabetical order.
+
+The `Origin` row in each cvar's header table identifies where the cvar
+comes from:
+
+* **Engine ({et-name} / {etl-name})** — server-engine cvars: `sv_*`,
+  `com_*`, `net_*`, `fs_*`.
+* **Game ({etl-name})** — game-module cvars: `g_*`, `match_*`,
+  `vote_allow_*`.
+* **Game ({etl-name}, overridden by {vg-name})** — game cvars whose
+  default the {vg-name} mod changes from upstream.
+* **{vg-name}** — added by {vg-name}: `vg_*`, `vanguard_*`.
+====
+
+== I-V (vanguard_*)
+
+include::../cvar/vanguard_diag_dump.adoc[]
+
+include::../cvar/vanguard_hitbox_debug.adoc[]
+
+include::../cvar/vanguard_hitbox_strict.adoc[]
+
+== V (vg_*)
+
+include::../cvar/vg_fun.adoc[]
+
+[NOTE]
+====
+**TODO** — port and expand the {vg-name} cvar list as Phase 7.x and
+beyond add new configuration knobs. Existing cvars to document next:
+
+* `vanguard_falldamage_profile` (Phase 7.3)
+* `g_debugHitboxes` (renderer AABB visualisation)
+* `vg_fun_*` family (per-feature toggles, populated in v0.5.3)
+====
+
+[[cvars-inherited]]
+== Inherited from ET / ETLegacy
+
+The following cvars come from the {etl-name} server and game module and
+apply to {vg-name} unchanged unless explicitly noted. They are
+documented here because a {vg-name} server administrator needs them on
+day one — every `server.cfg` that boots a usable {vg-name} server
+touches a substantial subset of this list.
+
+The grouping below is by purpose, not by alphabet, so that a newcomer
+can read top-to-bottom and end with a working mental model of a
+`server.cfg`. The annotated profiles in <<config-walkthrough>> use the
+same grouping.
+
+=== Server identity & MOTD
+
+include::../cvar/sv_hostname.adoc[]
+
+include::../cvar/g_motd.adoc[]
+
+include::../cvar/sv_master1.adoc[]
+
+=== Capacity & access
+
+include::../cvar/sv_maxclients.adoc[]
+
+include::../cvar/sv_privateClients.adoc[]
+
+include::../cvar/sv_privatePassword.adoc[]
+
+include::../cvar/g_password.adoc[]
+
+include::../cvar/rconPassword.adoc[]
+
+=== Networking
+
+include::../cvar/fs_game.adoc[]
+
+include::../cvar/sv_fps.adoc[]
+
+include::../cvar/sv_maxRate.adoc[]
+
+include::../cvar/sv_minRate.adoc[]
+
+include::../cvar/sv_pure.adoc[]
+
+include::../cvar/sv_allowDownload.adoc[]
+
+include::../cvar/sv_wwwDownload.adoc[]
+
+include::../cvar/sv_wwwBaseURL.adoc[]
+
+include::../cvar/sv_wwwDlDisconnected.adoc[]
+
+include::../cvar/sv_minPing.adoc[]
+
+include::../cvar/sv_maxPing.adoc[]
+
+=== Security & flood protection
+
+include::../cvar/sv_floodProtect.adoc[]
+
+include::../cvar/g_floodProtection.adoc[]
+
+include::../cvar/g_floodLimit.adoc[]
+
+include::../cvar/g_floodWait.adoc[]
+
+include::../cvar/g_inactivity.adoc[]
+
+=== Match & gametype
+
+include::../cvar/g_gametype.adoc[]
+
+include::../cvar/g_warmup.adoc[]
+
+include::../cvar/g_doWarmup.adoc[]
+
+include::../cvar/g_friendlyFire.adoc[]
+
+include::../cvar/g_teamForceBalance.adoc[]
+
+include::../cvar/g_balancedteams.adoc[]
+
+include::../cvar/g_complaintlimit.adoc[]
+
+include::../cvar/match_minplayers.adoc[]
+
+include::../cvar/match_readypercent.adoc[]
+
+include::../cvar/match_timeoutcount.adoc[]
+
+include::../cvar/match_warmupDamage.adoc[]
+
+=== Maps & rotation
+
+include::../cvar/mapname.adoc[]
+
+include::../cvar/nextmap.adoc[]
+
+=== Logging
+
+include::../cvar/g_log.adoc[]
+
+include::../cvar/g_logSync.adoc[]
+
+[NOTE]
+====
+The cvars listed above are the {vg-name} day-one set; ETLegacy exposes
+many more (votes, latched gameplay timers, performance toggles). The
+inventory here is the *server-admin minimum* — anything beyond should
+be looked up in the {etl-name} source at {etl-website} or in the
+upstream wiki.
+====
