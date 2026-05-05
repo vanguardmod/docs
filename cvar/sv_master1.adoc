@@ -1,0 +1,35 @@
+[[cvar.sv_master1]]
+=== sv_master1
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `"etmaster.idsoftware.com"`
+| Type          | string (hostname)
+| Flags         | `CVAR_PROTECTED`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Hostname of the primary master server the dedicated server announces
+itself to. The original id Software master at the default value is no
+longer operational; {etl-name}-era public servers reach the working
+master via `sv_master2`, which the engine seeds from
+`com_masterServer` (`master.etlegacy.com`).
+
+Most administrators will not change this directly. It is documented here
+so that the master-server chain is comprehensible: an {etl-name} server
+typically advertises to both `sv_master1` (legacy id master, unused) and
+`sv_master2` (the live {etl-name} master).
+
+[NOTE]
+====
+The `_PROTECTED` flag means the value cannot be modified through user
+config in untrusted contexts. To change masters, set the cvar from a
+server-side config (not from a user-uploaded `autoexec.cfg`).
+====
+
+==== See also
+
+* `sv_master2`–`sv_master4` — additional master slots, same flags
+* {etl-website} for the live ET ecosystem

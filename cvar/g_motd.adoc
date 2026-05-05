@@ -1,0 +1,32 @@
+[[cvar.g_motd]]
+=== g_motd
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `""` (empty)
+| Type          | string
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Message of the day, displayed to clients on connect. {et-name} stock has
+no separate `sv_motd` cvar; the {etl-name} game module's `g_motd` is the
+single source for this string.
+
+A short, one-line greeting works best — the message is shown in the
+client's connection screen, which has limited vertical space. {et-name}
+colour codes are accepted.
+
+==== Examples
+
+.Set in `server.cfg`
+[source]
+----
+set g_motd "Welcome — type !help in chat for commands"
+----
+
+==== See also
+
+* <<cvar.sv_hostname>>

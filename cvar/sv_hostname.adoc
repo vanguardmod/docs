@@ -1,0 +1,34 @@
+[[cvar.sv_hostname]]
+=== sv_hostname
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `"ETLHost"`
+| Type          | string
+| Flags         | `CVAR_SERVERINFO` `CVAR_ARCHIVE`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+The display name shown for this server in the in-game server browser and
+in any third-party server list that scrapes the protocol's serverinfo
+string. {et-name} colour codes are accepted (e.g. `^8` for the
+{vg-name-colored} brand colour).
+
+The default `ETLHost` is the bare-engine fallback; every real server
+should set its own. Long names are truncated by some browsers — keep
+the visible portion under roughly 60 characters.
+
+==== Examples
+
+.Set in `server.cfg`
+[source]
+----
+set sv_hostname "{vg-name-colored} ^7Public Server"
+----
+
+==== See also
+
+* <<cvar.g_motd>>
+* <<config-walkthrough>>
