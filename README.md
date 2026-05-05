@@ -16,27 +16,28 @@ The manual is published in two places:
 
 ## Repository layout
 
-```
-docs/
-├── book/                 chapter sources, master.adoc is the entry point
-├── cvar/                 one .adoc file per cvar (a-la Jaymod's doc/cvar/)
-├── images/               figures / diagrams referenced from the book
-├── theme/                asciidoctor-pdf theme (VanguardMod branding)
-├── .github/workflows/    CI (build on PR) + Release (tag → PDF → asset)
-├── Gemfile               Ruby deps (asciidoctor, asciidoctor-pdf, rouge)
-└── Makefile              `make pdf`, `make html`, `make clean`
-```
+    docs/
+    ├── book/                 chapter sources, master.adoc is the entry point
+    ├── cvar/                 one .adoc file per cvar
+    ├── images/               figures referenced from the book
+    ├── theme/                asciidoctor-pdf theme (VanguardMod branding)
+    ├── bin/setup             one-time bundler bootstrap
+    ├── .github/workflows/    CI (build on PR) + Release (tag → PDF → asset)
+    ├── Gemfile               Ruby deps (asciidoctor, asciidoctor-pdf, rouge)
+    └── Makefile              `make pdf`, `make html`, `make clean`
 
 ## Building locally
 
-Requirements: Ruby ≥ 3.0 and Bundler.
+Requirements: Ruby >= 3.0 and Bundler.
 
-```sh
-bundle install
-make pdf      # → build/vanguardmod-manual.pdf
-make html     # → build/vanguardmod-manual.html
-make clean
-```
+    bin/setup     # one-time: installs gems into vendor/bundle (no sudo needed)
+    make pdf      # -> build/vanguardmod-manual.pdf
+    make html     # -> build/vanguardmod-manual.html
+    make clean
+
+The `bin/setup` script configures Bundler to install gems into the
+project-local `vendor/bundle/` directory rather than systemwide, so no
+`sudo` is required and you don't need write permission to `/var/lib/gems`.
 
 ## Versioning
 
@@ -47,7 +48,7 @@ matching docs release tag.
 ## Contributing
 
 - One cvar = one file in `cvar/`.
-- New cvars must be `include::`d from `book/04-cvars.adoc`.
+- New cvars must be `include::`d from `book/06-cvars.adoc`.
 - Cross-references use `<<anchor-id,Display Text>>` syntax.
 - Branding constants live in `book/attributes.adoc` — never hardcode the mod
   name, version, or URLs.

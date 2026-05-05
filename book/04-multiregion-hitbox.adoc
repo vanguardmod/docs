@@ -46,7 +46,7 @@ The current capsule set covers nine logical regions:
 | Capsule from upper-abdomen to pelvis.
 
 | GROIN    | 5
-| Sphere at the pelvis (Alphaloki's `groinhit` capsule).
+| Sphere at the pelvis (groin-hit capsule).
 
 | SHOULDER | 6
 | Two capsules, one per shoulder, bridging neck and upper-arm bones.

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# One-shot setup — configures Bundler to install gems locally and runs install.
+# Run this once after cloning the repo.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+bundle config set --local path 'vendor/bundle'
+bundle install
+
+echo
+echo "Setup complete. Build the manual with: make pdf"
