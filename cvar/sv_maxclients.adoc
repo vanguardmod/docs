@@ -1,0 +1,34 @@
+[[cvar.sv_maxclients]]
+=== sv_maxclients
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `20`
+| Type          | int
+| Flags         | `CVAR_SERVERINFO` `CVAR_LATCH`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Total number of player slots on the server, including spectators. Bumping
+this value requires a `map_restart` because of the `_LATCH` flag — it
+does not take effect until the server reloads.
+
+The hard upper bound is the engine's `MAX_CLIENTS` (64 in {etl-name}); in
+practice 24–32 is typical for public servers and 12–16 for cup servers.
+Some of these slots can be reserved as private — see
+<<cvar.sv_privateClients>>.
+
+==== Examples
+
+.Public server with 24 total slots
+[source]
+----
+set sv_maxclients 24
+----
+
+==== See also
+
+* <<cvar.sv_privateClients>>
+* <<cvar.sv_privatePassword>>

@@ -1,0 +1,38 @@
+[[cvar.sv_privateClients]]
+=== sv_privateClients
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0`
+| Type          | int
+| Flags         | `CVAR_SERVERINFO`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Number of <<cvar.sv_maxclients,total slots>> that are reserved for
+clients connecting with the right <<cvar.sv_privatePassword,private
+password>>. Used to guarantee admin and friend access on a full public
+server, and to reserve cup-ref slots on a cup server.
+
+Setting `sv_privateClients` to `N` carves the top `N` slots out of
+`sv_maxclients` — public clients only see `sv_maxclients - N` available
+slots in the browser. The reservation is enforced by the engine on
+connect.
+
+==== Examples
+
+.Public server with 4 reserved admin slots out of 24 total
+[source]
+----
+set sv_maxclients      24
+set sv_privateClients  4
+set sv_privatePassword "CHANGEME-private"
+----
+
+==== See also
+
+* <<cvar.sv_maxclients>>
+* <<cvar.sv_privatePassword>>
+* <<cvar.g_password>>
