@@ -1,0 +1,40 @@
+[[cvar.g_warmup]]
+=== g_warmup
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `60` (seconds)
+| Type          | int (seconds)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is short (5–10 s)
+| Scope         | server
+|===
+
+Length of the warmup period before a match starts. Active only when
+<<cvar.g_doWarmup>> = `1`.
+
+Public servers run a long warmup so that arrivals can settle in;
+cup servers run a short warmup because both teams are paired and ready.
+
+==== Examples
+
+.Public newbie server
+[source]
+----
+set g_doWarmup 1
+set g_warmup   30
+----
+
+.Cup server
+[source]
+----
+set g_doWarmup 1
+set g_warmup   10
+----
+
+==== See also
+
+* <<cvar.g_doWarmup>>
+* <<cvar.match_warmupDamage>>
+* <<cvar.match_readypercent>>

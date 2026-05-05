@@ -1,0 +1,40 @@
+[[cvar.match_readypercent]]
+=== match_readypercent
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `100`
+| Type          | int (percent, 1–100)
+| Flags         | none
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `100`
+| Scope         | server
+|===
+
+Percentage of connected players that must call `!ready` (or `/ready`)
+before warmup ends and the match starts. `100` requires every player to
+ready up; lower values let the match begin once enough players are
+ready.
+
+Cup play conventionally requires `100` so that no one starts with a
+team-mate not yet at the spawn. Public servers may relax this.
+
+==== Examples
+
+.Cup server (everyone must !ready)
+[source]
+----
+set match_readypercent 100
+----
+
+.Permissive public server (75% threshold)
+[source]
+----
+set match_readypercent 75
+----
+
+==== See also
+
+* <<cvar.g_doWarmup>>
+* <<cvar.match_minplayers>>
+* <<cvar.match_warmupDamage>>

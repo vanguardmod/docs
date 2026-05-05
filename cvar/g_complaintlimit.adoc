@@ -1,0 +1,44 @@
+[[cvar.g_complaintlimit]]
+=== g_complaintlimit
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (game), `6` (engine fallback)
+| Type          | int (incidents)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `6`
+| Scope         | server
+|===
+
+Number of friendly-fire complaints a player may accumulate before they
+are kicked. Used to deter repeat team-killers without requiring a human
+admin in the loop.
+
+[NOTE]
+====
+The default value is ambiguous in the {etl-name} source: the game
+module's cvar table declares `0` (disabled), but the engine's
+`sv_init.c` registers it with default `6` *before* the game module
+loads. Whichever runs first wins on a fresh server. In practice, recent
+{etl-name} dedicated-server boots come up with `6`. Set the value
+explicitly in `server.cfg` to remove the ambiguity.
+====
+
+==== Examples
+
+.Cup server
+[source]
+----
+set g_complaintlimit 6
+----
+
+.Disable complaints (e.g. private practice server)
+[source]
+----
+set g_complaintlimit 0
+----
+
+==== See also
+
+* <<cvar.g_friendlyFire>>

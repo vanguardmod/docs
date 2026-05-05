@@ -1,0 +1,40 @@
+[[cvar.match_minplayers]]
+=== match_minplayers
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `4`
+| Type          | int (players)
+| Flags         | none
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is the cup roster (e.g. `6` for 3v3)
+| Scope         | server
+|===
+
+Minimum total number of players (across both teams) before a match is
+allowed to start. Until this many players have joined, the server holds
+in warmup.
+
+Cup servers set this to the cup format's roster (`6` for 3v3, `12` for
+6v6) so that the match cannot start under-strength. Public newbie
+servers set it low (`2` or `4`) so that matches happen even on a
+sparsely-populated server.
+
+==== Examples
+
+.Cup 6v6
+[source]
+----
+set match_minplayers 12
+----
+
+.Public newbie server
+[source]
+----
+set match_minplayers 4
+----
+
+==== See also
+
+* <<cvar.g_doWarmup>>
+* <<cvar.match_readypercent>>

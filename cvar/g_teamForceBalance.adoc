@@ -1,0 +1,40 @@
+[[cvar.g_teamForceBalance]]
+=== g_teamForceBalance
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `0` (refs/admins handle balance)
+| Scope         | server
+|===
+
+When enabled, the engine refuses team-join requests that would create or
+worsen a team-size imbalance. A player trying to join a team that is
+larger than the other gets a "team is full / unbalanced" message and
+must pick the other team or stay spectator.
+
+Useful on public servers where players self-pick teams; cup servers
+turn this off because team rosters are fixed and refs handle balance
+manually.
+
+==== Examples
+
+.Public server
+[source]
+----
+set g_teamForceBalance 1
+----
+
+.Cup server
+[source]
+----
+set g_teamForceBalance 0
+----
+
+==== See also
+
+* <<cvar.g_balancedteams>>
+* <<cvar.g_friendlyFire>>

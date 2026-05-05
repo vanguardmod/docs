@@ -1,0 +1,40 @@
+[[cvar.nextmap]]
+=== nextmap
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `""` (empty); set internally to `"map_restart 0"` on map start
+| Type          | string (engine command)
+| Flags         | `CVAR_TEMP`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Engine command to execute when the current map ends (objective met,
+time expired, or `vstr nextmap` is invoked). The engine seeds this with
+`"map_restart 0"` on every map start, so a server with no rotation
+naturally re-runs the same map.
+
+A custom map rotation chains `nextmap` definitions together (each map's
+end-of-round writes the next entry into `nextmap`), driven from a
+`map_rotation.cfg` — see <<map-rotation>>.
+
+==== Examples
+
+.Move to a specific map after the current one
+[source]
+----
+set nextmap "map radar"
+----
+
+.Chain into a rotation entry
+[source]
+----
+set nextmap "vstr m2"
+----
+
+==== See also
+
+* <<cvar.mapname>>
+* <<map-rotation>>

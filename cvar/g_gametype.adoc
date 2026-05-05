@@ -1,0 +1,49 @@
+[[cvar.g_gametype]]
+=== g_gametype
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `4` (`GT_WOLF_CAMPAIGN`)
+| Type          | int (enum)
+| Flags         | `CVAR_SERVERINFO` `CVAR_LATCH`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `2` (Stopwatch)
+| Scope         | server
+|===
+
+The gametype the server runs. Latched: a change does not take effect
+until the next `map` or `map_restart`. The standard {etl-name} values:
+
+[cols="1,3,3",options="header",frame=all]
+|===
+| Value | Name           | Description
+
+| `2`   | `GT_WOLF`      | Single-objective Wolfenstein gametype (Stopwatch in cup play).
+| `3`   | `GT_WOLF_STOPWATCH` | Two-round attack/defend variant.
+| `4`   | `GT_WOLF_CAMPAIGN`  | Multi-map campaign — the public-server default.
+| `5`   | `GT_WOLF_LMS`  | Last Man Standing.
+| `6`   | `GT_WOLF_MAPVOTING` | Map-voting variant.
+|===
+
+Cup matches run gametype `2` for orthodox single-map Stopwatch
+scoring. Public newbie-friendly servers run gametype `4` for the
+guided campaign progression.
+
+==== Examples
+
+.Cup server
+[source]
+----
+set g_gametype 2
+----
+
+.Public campaign server
+[source]
+----
+set g_gametype 4
+----
+
+==== See also
+
+* <<cvar.g_warmup>>
+* <<cvar.match_minplayers>>

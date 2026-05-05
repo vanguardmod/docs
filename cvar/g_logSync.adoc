@@ -1,0 +1,33 @@
+[[cvar.g_logSync]]
+=== g_logSync
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled — buffered writes)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `1` (per-line flush)
+| Scope         | server
+|===
+
+When `1`, the gameplay log (<<cvar.g_log>>) is flushed to disk after
+every line. When `0`, the OS buffers writes and may lose tail entries
+on crash.
+
+Cup play conventionally runs `g_logSync 1` so that the log is durable
+even if the server process crashes mid-match — the audit trail must
+survive an incident, not just a clean shutdown.
+
+==== Examples
+
+.Cup or audit server
+[source]
+----
+set g_log     "vanguard-cup.log"
+set g_logSync 1
+----
+
+==== See also
+
+* <<cvar.g_log>>

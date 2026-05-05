@@ -1,0 +1,37 @@
+[[cvar.mapname]]
+=== mapname
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `"nomap"`
+| Type          | string (map shortname)
+| Flags         | `CVAR_SERVERINFO` `CVAR_ROM`
+| Origin        | Engine ({et-name} / {etl-name})
+| In cup mode   | read-only (CVAR_ROM)
+| Scope         | server
+|===
+
+The map currently loaded, set by the engine on every `map` command.
+Read-only — to change the map, issue `map MAPNAME` from `rcon` or the
+server console, not `set mapname`.
+
+==== Examples
+
+.Read the current map
+[source,console]
+----
+] /rcon serverinfo
+----
++
+Look for the `mapname` field.
+
+.Switch maps from rcon
+[source,console]
+----
+] /rcon map oasis
+----
+
+==== See also
+
+* <<cvar.nextmap>>
+* <<map-rotation>>

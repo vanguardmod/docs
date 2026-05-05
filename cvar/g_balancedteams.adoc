@@ -1,0 +1,25 @@
+[[cvar.g_balancedteams]]
+=== g_balancedteams
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0`
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_SERVERINFO` `CVAR_ROM`
+| Origin        | Game ({etl-name})
+| In cup mode   | read-only (CVAR_ROM)
+| Scope         | server
+|===
+
+Read-only flag exposed in serverinfo. Set internally by the gamecode
+when the two teams are currently balanced (within the gamecode's
+balance criterion); used by the server browser and by callvote-balance
+logic.
+
+This is **not** a tunable: the `CVAR_ROM` flag means it cannot be set
+from `server.cfg` or `rcon`. The user-facing balance control is
+<<cvar.g_teamForceBalance>>.
+
+==== See also
+
+* <<cvar.g_teamForceBalance>>

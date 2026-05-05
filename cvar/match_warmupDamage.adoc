@@ -1,0 +1,39 @@
+[[cvar.match_warmupDamage]]
+=== match_warmupDamage
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | none
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable
+| Scope         | server
+|===
+
+Whether weapons deal damage during the warmup period. With `1`, players
+can practice fights and weapon timings during warmup; with `0`, warmup
+is a no-damage rehearsal — useful on practice servers where the warmup
+is just a route-rehearsal pause.
+
+Cup play conventionally allows warmup damage so that players can
+calibrate their crosshair and routes before the match clock starts.
+
+==== Examples
+
+.Cup or competitive practice
+[source]
+----
+set match_warmupDamage 1
+----
+
+.Pure-rehearsal practice server
+[source]
+----
+set match_warmupDamage 0
+----
+
+==== See also
+
+* <<cvar.g_warmup>>
+* <<cvar.g_doWarmup>>

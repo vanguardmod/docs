@@ -1,0 +1,38 @@
+[[cvar.match_timeoutcount]]
+=== match_timeoutcount
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `3`
+| Type          | int (timeouts per side)
+| Flags         | none
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `3`
+| Scope         | server
+|===
+
+Number of tactical timeouts each team may call during a match. A team
+that has used all of its timeouts can no longer issue `!timeout` until
+the next round.
+
+Cup play conventionally allows `3` per side per match, matching the
+historical ETPro defaults. Public servers either disable timeouts (`0`)
+or raise the count.
+
+==== Examples
+
+.Cup server
+[source]
+----
+set match_timeoutcount 3
+----
+
+.Disable timeouts
+[source]
+----
+set match_timeoutcount 0
+----
+
+==== See also
+
+* <<cvar.match_readypercent>>

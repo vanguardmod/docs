@@ -1,0 +1,36 @@
+[[cvar.g_doWarmup]]
+=== g_doWarmup
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0` (disabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; conventionally `1`
+| Scope         | server
+|===
+
+Master switch for the pre-match warmup period. When `0`, the match
+begins immediately on map load; when `1`, the engine waits
+<<cvar.g_warmup>> seconds (and, for cup gametypes, until
+<<cvar.match_readypercent,enough players have called !ready>>) before
+starting.
+
+Almost every server should run this `1` — the engine default of `0` is
+only sensible for instant-action LAN play.
+
+==== Examples
+
+.Default for any real server
+[source]
+----
+set g_doWarmup 1
+set g_warmup   30
+----
+
+==== See also
+
+* <<cvar.g_warmup>>
+* <<cvar.match_warmupDamage>>
+* <<cvar.match_readypercent>>

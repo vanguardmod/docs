@@ -1,0 +1,46 @@
+[[cvar.g_friendlyFire]]
+=== g_friendlyFire
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1` (enabled)
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_SERVERINFO` `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is `1` (orthodox)
+| Scope         | server
+|===
+
+Whether players take damage from teammates. The {et-name} engine default
+is `1` (friendly fire on), which is also the cup-orthodox setting —
+team-killing under FF is a tactical concern (panzer splash, mistimed
+artillery) that cup play deliberately preserves.
+
+Public newbie servers commonly turn this off (`0`) to remove the
+griefing surface, at the cost of removing meaningful FF tactics.
+
+[NOTE]
+====
+Cup play conventionally requires `g_friendlyFire 1`. Whether
+<<cvar.vg_fun,vg_fun 0>> actively forces this is a {vg-name}
+implementation choice — see <<cup-vs-fun-mode>>.
+====
+
+==== Examples
+
+.Public newbie server
+[source]
+----
+set g_friendlyFire 0
+----
+
+.Cup server
+[source]
+----
+set g_friendlyFire 1
+----
+
+==== See also
+
+* <<cvar.g_complaintlimit>>
+* <<cvar.g_teamForceBalance>>

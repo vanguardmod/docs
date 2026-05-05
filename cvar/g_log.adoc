@@ -1,0 +1,41 @@
+[[cvar.g_log]]
+=== g_log
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `""` (empty — logging disabled)
+| Type          | string (filename)
+| Flags         | `CVAR_ARCHIVE`
+| Origin        | Game ({etl-name})
+| In cup mode   | tunable; cup convention is to log to a per-server file
+| Scope         | server
+|===
+
+Path of the gameplay log file relative to the mod's `fs_game` directory.
+When set, the gamecode appends a structured event line per gameplay
+event (kills, captures, chat, admin commands) — the canonical input for
+post-match stats parsers and for the {wg-name} review pipeline.
+
+Empty disables logging entirely. A real per-server filename is the
+right default for any server that wants stats or audit history.
+
+==== Examples
+
+.Public server
+[source]
+----
+set g_log     "vanguard-public.log"
+set g_logSync 1
+----
+
+.Cup server (per-cup log file)
+[source]
+----
+set g_log     "vanguard-cup-2026-spring.log"
+set g_logSync 1
+----
+
+==== See also
+
+* <<cvar.g_logSync>>
+* <<stats-endpoints>>
