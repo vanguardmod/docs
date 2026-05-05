@@ -1,0 +1,8 @@
+build/
+.bundle/
+vendor/
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/

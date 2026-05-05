@@ -1,0 +1,26 @@
+[[cvar.vanguard_diag_dump]]
+=== vanguard_diag_dump
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0`
+| Type          | bool (`0` or `1`, auto-resets to `0`)
+| Flags         | none
+| Since         | v0.4.3
+| Scope         | server
+|===
+
+Triggers a one-shot full diagnostic dump on the next eligible shot, including
+the capsule diagnostic, bone resolution, and bone-axis world-projection lines
+prefixed with `VG_DIAG_DUMP:`.
+
+`vanguard_diag_dump 1`::
+  Arms a one-shot dump. After the next eligible shot fires the dump, the
+  cvar auto-resets to `0`. The cvar is also auto-armed once whenever
+  <<cvar.vanguard_hitbox_debug>> transitions from `0` to `1`.
+
+==== See also
+
+* <<cvar.vanguard_hitbox_debug>>
+* <<cvar.vanguard_hitbox_strict>>
+* <<multiregion-hitbox>>

@@ -1,0 +1,55 @@
+= VanguardMod Manual
+wahke <https://wolffiles.eu>
+{vg-version}, {docdate}
+:title-logo-image: image:logo.png[pdfwidth=4in,align=center]
+:doctype:           book
+:lang:              en
+:toc:               left
+:toclevels:         3
+:sectnums:
+:sectnumlevels:     3
+:icons:             font
+:source-highlighter: rouge
+:rouge-style:       monokai
+:experimental:
+:imagesdir:         ../images
+:chapter-signifier: Chapter
+:appendix-caption:  Appendix
+:figure-caption:    Figure
+:table-caption:     Table
+:example-caption:   Example
+:listing-caption:   Listing
+:xrefstyle:         short
+
+include::attributes.adoc[]
+
+[preface]
+== Preface
+
+This is the official manual for {vg-name} v{vg-version}.
+
+{vg-name} is a competitive-focused modification for {et-name} ({et-name-abbr}),
+built on the {etl-name} runtime. It targets ESL cup play and modern public
+servers with a strong, military-toned identity.
+
+This manual is the canonical reference for server administrators, competitive
+players, and contributors. It is updated alongside every mod release and is
+shipped both as a standalone GitHub Release at {vg-docs-repo} and bundled
+inside every server ZIP from {vg-repo}.
+
+[NOTE]
+====
+{vg-name} is currently in **Alpha** (v0.x.x). Cvars, commands, and behaviours
+documented here may change between alpha releases. v1.0.0 will mark the
+**Beta** milestone with a stable cvar contract.
+====
+
+include::01-intro.adoc[leveloffset=+1]
+include::02-installation.adoc[leveloffset=+1]
+include::03-server-admin.adoc[leveloffset=+1]
+include::04-multiregion-hitbox.adoc[leveloffset=+1]
+include::05-cup-vs-fun-mode.adoc[leveloffset=+1]
+include::06-cvars.adoc[leveloffset=+1]
+include::07-commands.adoc[leveloffset=+1]
+include::08-wolfguard.adoc[leveloffset=+1]
+include::09-migration.adoc[leveloffset=+1]

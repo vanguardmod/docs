@@ -1,0 +1,84 @@
+[[intro]]
+= Introduction
+
+== About {vg-name}
+
+{vg-name} is a fresh, ground-up game modification for {et-name}, built as a
+{etl-name} mod and **not** a fork or a rebrand of an existing mod. While the
+mod takes inspiration from the ecosystem of community classics
+({mod-noquarter}, {mod-jaymod}, {mod-silent}, {mod-etpub}, {mod-etpro},
+{mod-nitmod}), it is a distinct project with its own goals:
+
+* A precise, modern hit-detection model based on multi-region capsules
+  (see <<multiregion-hitbox>>) instead of the legacy axis-aligned bounding box.
+* A clean separation between **Cup Mode** — strict, orthodox, ESL-ready — and
+  **Fun Mode** — the playful public-server feature set
+  (see <<cup-vs-fun-mode>>).
+* An integrated, server-side anti-cheat — {wg-name} — with a centralised global
+  ban database (see <<wolfguard>>).
+* A first-party companion website at {vg-website} for live server stats,
+  player profiles, rankings, and a public ban list.
+
+== About this manual
+
+This manual is generated from AsciiDoc sources hosted at {vg-docs-repo}. Bug
+reports, typos, and pull requests are welcome.
+
+The manual is structured for three primary audiences:
+
+Server admins::
+  Chapters 2–3 cover installation, the admin command system, and the cup/fun
+  mode switch. Chapters 6–7 are the day-to-day reference (cvars and !commands).
+
+Competitive players::
+  Chapters 4–5 explain the hit-detection model and the orthodox cup ruleset
+  enforced when `vg_fun 0` is active.
+
+Migrating admins::
+  Chapter 9 maps cvars and commands from {mod-jaymod}, {mod-noquarter},
+  {mod-silent}, and {mod-etpub} to their {vg-name} equivalents.
+
+== Conventions
+
+Throughout this manual:
+
+* Console input is shown in a fixed-width listing. The prompt indicates the
+  source: `]` for the in-game client console, `$` for the dedicated server
+  console (no prompt for rcon, since rcon-from-client carries the `/rcon`
+  prefix).
+* Cvar names are linked to their reference page on first use in each chapter,
+  e.g. <<cvar.vg_fun>>.
+* Command names appear in fixed-width and will link to their reference page
+  once the command reference is fleshed out, e.g. `!banuser`.
+* `UPPERCASE` placeholders inside listings indicate values you must substitute
+  (e.g. `SLOT`, `PASSWORD`).
+
+.Example: client-console command
+[source,console]
+----
+] /rcon vg_fun 1
+----
+
+.Example: server-console command
+[source,console]
+----
+$ vg_fun 1
+----
+
+[NOTE]
+====
+This is a note. Notes contain useful side information.
+====
+
+[WARNING]
+====
+This is a warning. Warnings highlight things that, if ignored, will cause
+incorrect server behaviour or unfair gameplay.
+====
+
+== Where to get help
+
+* Issues & bug reports: {vg-repo}/issues
+* Manual issues & PRs:  {vg-docs-repo}/issues
+* Server tools:         {vg-tools-repo}
+* Community:            {vg-website}

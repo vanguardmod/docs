@@ -1,0 +1,55 @@
+[[cvar.vg_fun]]
+=== vg_fun
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0`
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE` `CVAR_LATCH`
+| Since         | v0.5.3
+| Scope         | server
+|===
+
+Master switch between **Cup Mode** and **Fun Mode** (see <<cup-vs-fun-mode>>).
+This is the single most important configuration cvar on a {vg-name} server.
+
+`vg_fun 0` *(default — Cup Mode)*::
+  Strict, ESL-orthodox profile. All `vg_fun_*` sub-cvars are locked to their
+  cup-defaults regardless of `cfg` or `rcon` writes. Stats events are tagged
+  `mode=cup` and feed the cup leaderboard.
+
+`vg_fun 1` *(Fun Mode)*::
+  Public-server feature set unlocked. All `vg_fun_*` sub-cvars become
+  tunable. Stats events are tagged `mode=fun` and feed the fun leaderboard,
+  which is rendered separately on player profiles at {vg-website}.
+
+[IMPORTANT]
+====
+{wg-name} is **active in both modes**. There is no "fun" without anti-cheat.
+====
+
+==== Mode announcement
+
+The server announces the active mode to every connecting client. The
+announcement is informational; the mode itself is set server-side and
+cannot be changed by clients.
+
+==== Examples
+
+.Cup-only server
+[source,console]
+----
+set vg_fun 0
+----
+
+.Public fun server
+[source,console]
+----
+set vg_fun 1
+set vg_fun_doublejump 1
+set vg_fun_lowgravity 0
+----
+
+==== See also
+
+* <<cup-vs-fun-mode>>

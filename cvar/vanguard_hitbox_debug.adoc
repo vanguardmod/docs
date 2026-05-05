@@ -1,0 +1,37 @@
+[[cvar.vanguard_hitbox_debug]]
+=== vanguard_hitbox_debug
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `0`
+| Type          | bool (`0` or `1`)
+| Flags         | none
+| Since         | v0.4.3
+| Scope         | server
+|===
+
+Toggles `VG_DIAG:` log output for the multi-region hitbox subsystem. When
+enabled, every bullet trace emits a structured log line with the capsule-test
+result, the resolved bone, and (in strict mode) the reject reason if no
+capsule matched.
+
+`vanguard_hitbox_debug 0` *(default)*::
+  No diagnostic output.
+
+`vanguard_hitbox_debug 1`::
+  Per-shot `VG_DIAG:` lines are written to the server log, prefixed with
+  `VG_DIAG:` for `grep`-friendly extraction. Toggling `0 → 1` also re-arms
+  a one-shot full diagnostic dump (see <<cvar.vanguard_diag_dump>>) at the
+  next eligible shot.
+
+[NOTE]
+====
+The diagnostic output is verbose and is not appropriate for long-running
+production servers — use it during testing and disable it again afterwards.
+====
+
+==== See also
+
+* <<cvar.vanguard_hitbox_strict>>
+* <<cvar.vanguard_diag_dump>>
+* <<multiregion-hitbox>>

@@ -1,0 +1,50 @@
+// VanguardMod global attributes — branding constants, URLs, references.
+//
+// NEVER hardcode the mod name, version, or links anywhere in the book.
+// Always use the {attribute} substitutions defined here.
+//
+// Two name variants:
+//   {vg-name}         — plain text, for prose:           "VanguardMod"
+//   {vg-name-colored} — ET color codes, for cvar/console: "^8Vanguard^7Mod"
+
+// --- VanguardMod ------------------------------------------------------------
+:vg-name:          VanguardMod
+:vg-name-colored:  pass:[^8Vanguard^7Mod]
+:vg-website:       https://vanguardmod.com
+:vg-repo:          https://github.com/vanguardmod/vanguard
+:vg-docs-repo:     https://github.com/vanguardmod/docs
+:vg-tools-repo:    https://github.com/vanguardmod/server-tools
+:vg-author:        wahke
+:vg-license:       GPL-3.0-or-later
+
+// {vg-version} is set on the command line by the build (-a vg-version=…).
+// Provide a fallback so local one-off builds without git tags still render.
+:vg-version: dev
+
+// --- WolfGuard --------------------------------------------------------------
+:wg-name:          WolfGuard
+:wg-tagline:       The integrated VanguardMod anti-cheat
+
+// --- Wolfenstein: Enemy Territory -------------------------------------------
+:et-name:          Wolfenstein: Enemy Territory
+:et-name-abbr:     ET
+:etl-name:         ETLegacy
+:etl-website:      https://www.etlegacy.com/
+
+// --- Reference mods (for cross-references and migration chapter) ------------
+:mod-jaymod:       Jaymod
+:mod-noquarter:    NoQuarter
+:mod-nitmod:       N!tmod
+:mod-silent:       silEnT
+:mod-etpub:        ETPub
+:mod-etpro:        ETPro
+
+// --- Console prompts (visual conventions, like Jaymod's &et.cconsole;) ------
+:et-cconsole:      pass:[]    // client console prompt
+:et-sconsole:      pass:[$]    // server console prompt
+:et-rcon:          pass:[/rcon]
+
+// --- Useful icons / admonitions --------------------------------------------
+:icon-cup:         🏆
+:icon-fun:         🎮
+:icon-cheat:       🛡

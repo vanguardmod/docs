@@ -1,0 +1,54 @@
+[[cvar.vanguard_hitbox_strict]]
+=== vanguard_hitbox_strict
+
+[cols="1h,4",frame=all,grid=rows]
+|===
+| Default       | `1`
+| Type          | bool (`0` or `1`)
+| Flags         | `CVAR_ARCHIVE`
+| Since         | v0.4.3
+| Scope         | server
+|===
+
+Controls whether bullet hits that fail to intersect any
+<<multiregion-hitbox,multi-region capsule>> fall back to the legacy
+axis-aligned bounding box (AABB).
+
+`vanguard_hitbox_strict 1` *(default, cup-orthodox)*::
+  A bullet that misses every capsule deals **no damage**. There is no AABB
+  fallback. This is the only correct setting for competitive cup play, and is
+  enforced by the cup-mode lockset when <<cvar.vg_fun>> is `0`.
+
+`vanguard_hitbox_strict 0`::
+  A bullet that misses every capsule falls back to the legacy 36×72-unit
+  AABB. The reported impactpoint in this case is `0` (`IMPACTPOINT_UNUSED`),
+  i.e. no specific region was hit. This setting is provided for legacy-
+  compatibility testing only.
+
+[WARNING]
+====
+Cup matches **must** run with `vanguard_hitbox_strict 1`. Running a cup
+match with strict mode disabled invalidates the match for the cup
+leaderboard and may trigger an admin warning in {wg-name} logs.
+====
+
+==== Examples
+
+.Setting via rcon at runtime
+[source,console]
+----
+] /rcon vanguard_hitbox_strict 1
+----
+
+.Setting in `server.cfg`
+[source,console]
+----
+set vanguard_hitbox_strict 1
+----
+
+==== See also
+
+* <<cvar.vanguard_hitbox_debug>> — emit `VG_DIAG:` log lines for every shot,
+  including capsule-test results and strict-reject reasons.
+* <<cvar.vanguard_diag_dump>> — one-shot full bone-axis diagnostic dump.
+* <<multiregion-hitbox>> — the multi-region capsule model, in depth.

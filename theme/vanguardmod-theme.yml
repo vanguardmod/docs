@@ -1,0 +1,104 @@
+# VanguardMod PDF theme
+# Reference: https://docs.asciidoctor.org/pdf-converter/latest/theme/
+#
+# Design intent: clean, military, readable. No decorative fonts.
+# Heading accent: a cool steel-blue (#0a4d8c) that reads as "Vanguard cyan"
+# without being so saturated that it tires the eye over a 200-page manual.
+
+extends: default
+
+base:
+  font_size: 10.5
+  line_height_length: 14
+  line_height: 1.4
+  font_color: '222222'
+
+heading:
+  font_color: '0a4d8c'
+  font_style: bold
+  h1_font_size: 30
+  h2_font_size: 22
+  h3_font_size: 16
+  h4_font_size: 13
+  h5_font_size: 11.5
+  h6_font_size: 10.5
+  margin_top: 12
+  margin_bottom: 6
+
+link:
+  font_color: '0a4d8c'
+
+codespan:
+  font_family: Courier
+  font_color: '8e44ad'
+
+code:
+  font_family: Courier
+  font_size: 9.5
+  background_color: 'f4f4f4'
+  border_color: 'dddddd'
+  border_width: 0.5
+  padding: [6, 8, 6, 8]
+
+admonition:
+  column_rule_color: '0a4d8c'
+  column_rule_width: 0.5
+  padding: [4, 8, 4, 8]
+  icon:
+    note:
+      stroke_color: '0a4d8c'
+    tip:
+      stroke_color: '2e8b57'
+    warning:
+      stroke_color: 'd97706'
+    caution:
+      stroke_color: 'd97706'
+    important:
+      stroke_color: 'b91c1c'
+
+table:
+  head:
+    background_color: '0a4d8c'
+    font_color: 'ffffff'
+    font_style: bold
+  even_row_background_color: 'f4f7fb'
+  border_color: 'cccccc'
+  border_width: 0.5
+
+title_page:
+  align: center
+  title:
+    top: 50%
+    font_size: 36
+    font_color: '0a4d8c'
+    font_style: bold
+    line_height: 1.1
+  subtitle:
+    font_size: 18
+    font_color: '444444'
+  authors:
+    margin_top: 12
+    font_size: 12
+    font_color: '666666'
+  revision:
+    margin_top: 24
+    font_size: 11
+    font_color: '888888'
+
+footer:
+  font_size: 9
+  font_color: '888888'
+  border_color: 'dddddd'
+  border_width: 0.25
+  recto:
+    right:
+      content: '{document-title}  •  v{vg-version}  •  {page-number} / {page-count}'
+  verso:
+    left:
+      content: '{page-number} / {page-count}  •  v{vg-version}  •  {document-title}'
+
+toc:
+  font_color: '222222'
+  h1_font_color: '0a4d8c'
+  dot_leader:
+    font_color: 'aaaaaa'

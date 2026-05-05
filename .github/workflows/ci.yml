@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build manual
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need git history for `git describe` in Makefile
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build PDF
+        run: make pdf
+
+      - name: Build HTML
+        run: make html
+
+      - name: Upload PDF artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanguardmod-manual-pdf
+          path: build/vanguardmod-manual.pdf
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload HTML artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanguardmod-manual-html
+          path: build/vanguardmod-manual.html
+          if-no-files-found: error
+          retention-days: 14
